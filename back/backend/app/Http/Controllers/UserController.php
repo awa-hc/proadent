@@ -19,6 +19,8 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
+            'password_confirmation' => 'required|string|',
+            'phone' => 'required|string|max:11',
         ]);
 
         if ($validator->fails())
@@ -30,6 +32,8 @@ class UserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
+            'password_confirmation' => $request->password_confirmation,
+            'phone' => $request->phone,
         ]);
 
         return response()->json(['user' => $user], 201);
