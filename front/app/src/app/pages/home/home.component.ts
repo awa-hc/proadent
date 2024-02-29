@@ -36,6 +36,7 @@ export class HomeComponent {
   ngOnInit(): void {
     this.timeForm = this.fb.group({
       time: ['', [Validators.required, this.timeRangeValidator]],
+      reason: ['', [Validators.required]],
     });
   }
 
