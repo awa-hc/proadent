@@ -3,62 +3,49 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use app\Models\AccountReceivableDetail;
 
 class AccountReceivableDetailController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $details = AccountReceivableDetail::all();
+        return response()->json($details, 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'account_receivable_id' => 'required|exists:account_receivable,id',
+        ]);
+
+        $detail = AccountReceivableDetail::create($request->all());
+
+        return response()->json($detail, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(AccountReceivableDetail $detail)
     {
-        //
+        return response()->json($detail, 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, AccountReceivableDetail $detail)
     {
-        //
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'account_receivable_id' => 'required|exists:account_receivable,id',
+        ]);
+
+        $detail->update($request->all());
+
+        return response()->json($detail, 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(AccountReceivableDetail $detail)
     {
-        //
-    }
+        $detail->delete();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return response()->json(null, 204);
     }
 }

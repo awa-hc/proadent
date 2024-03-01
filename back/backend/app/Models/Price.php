@@ -7,5 +7,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class Price extends Model
 {
-    use HasFactory;
+    protected $fillable = ['user_id', 'procedure_id', 'appointment_days', 'total_price'];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function appointment()
+    {
+        return $this->belongsTo(Appointment::class);
+    }
+
+    public function procedure()
+    {
+        return $this->belongsTo(Procedure::class);
+    }
 }

@@ -7,5 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Procedure extends Model
 {
-    use HasFactory;
+    protected $fillable = ['name', 'description'];
 }

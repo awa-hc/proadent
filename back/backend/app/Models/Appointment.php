@@ -7,5 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Appointment extends Model
 {
-    use HasFactory;
+    protected $fillable = ['user_id', 'type', 'date', 'reason'];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -3,62 +3,54 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use app\Models\Report;
+
 
 class ReportController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $reports = Report::all();
-        return view('reports.index', compact('reports'));
+        return response()->json($reports, 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('reports.create');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'appointment_id' => 'required|exists:appointments,id',
+            'procedure_id' => 'required|exists:procedures,id',
+            'price_id' => 'required|exists:prices,id',
+        ]);
+
+        $report = Report::create($request->all());
+
+        return response()->json($report, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show($id)
+    public function show(Report $report)
     {
-        $report = Report::findOrFail($id);
-        return view('reports.show', compact('report'));
+        return response()->json($report, 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
+    public function update(Request $request, Report $report)
     {
-        $report = Report::findOrFail($id);
-        return view('reports.edit', compact('report'));
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'appointment_id' => 'required|exists:appointments,id',
+            'procedure_id' => 'required|exists:procedures,id',
+            'price_id' => 'required|exists:prices,id',
+        ]);
+
+        $report->update($request->all());
+
+        return response()->json($report, 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(Report $report)
     {
-    }
+        $report->delete();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
+        return response()->json(null, 204);
     }
 }
