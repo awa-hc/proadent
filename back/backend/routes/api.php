@@ -12,40 +12,22 @@ use App\Http\Controllers\AccountReceivableController;
 use App\Http\Controllers\AccountReceivableDetailController;
 use App\Http\Controllers\ReportController;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request)
+Route::middleware('auth:sanctum')->group(function ()
 {
-    return $request->user();
-});
 
-Route::post('/login', [AuthController::class, 'login'])->withoutMiddleware('auth');
-Route::middleware('auth')->group(function ()
-{
+    Route::get('/user', function (Request $request)
+    {
+        return $request->user();
+    });
+
     Route::post('logout', [AuthController::class, 'logout']);
-});
 
-Route::middleware('auth')->group(function ()
-{
     Route::post('/roles/store', [RoleController::class, 'store']);
     Route::get('/roles/index', [RoleController::class, 'index']);
     Route::get('/roles/{role}', [RoleController::class, 'show']);
     Route::put('/roles/{role}', [RoleController::class, 'update']);
     Route::delete('/roles/{role}', [RoleController::class, 'destroy']);
-});
 
-Route::post('/users/register', [UserController::class, 'register'])->withoutMiddleware('auth');
-Route::middleware('auth')->group(function ()
-{
     Route::put('/users/{user}', [UserController::class, 'update']);
     Route::delete('/users/{user}', [UserController::class, 'destroy']);
 
@@ -84,4 +66,13 @@ Route::middleware('auth')->group(function ()
     Route::get('/reports/{report}', [ReportController::class, 'show']);
     Route::put('/reports/{report}', [ReportController::class, 'update']);
     Route::delete('/reports/{report}', [ReportController::class, 'destroy']);
+});
+
+Route::post('/login', [AuthController::class, 'login'])->withoutMiddleware('auth');
+Route::post('/users/register', [UserController::class, 'register'])->withoutMiddleware('auth');
+Route::post('/users/send-email', [UserController::class, 'sendEmail'])->withoutMiddleware('auth');
+
+Route::middleware('auth:sanctum')->get('/user', function (Request $request)
+{
+    return $request->user();
 });

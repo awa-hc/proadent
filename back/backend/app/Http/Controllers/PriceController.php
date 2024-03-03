@@ -15,14 +15,26 @@ class PriceController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'user_id' => 'required|exists:users,id',
             'procedure_id' => 'required|exists:procedures,id',
+            'appointment_days' => 'required|integer|min:1',
+            'total_price' => 'required|numeric|min:0',
         ]);
 
-        $price = Price::create($request->all());
+        if ($validator->fails())
+        {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
-        return response()->json($price, 201);
+        $price = Price::create([
+            'user_id' => $request->user_id,
+            'procedure_id' => $request->procedure_id,
+            'appointment_days' => $request->appointment_days,
+            'total_price' => $request->total_price,
+        ]);
+
+        return response()->json(['price' => $price], 201);
     }
 
     public function show(Price $price)
@@ -35,6 +47,8 @@ class PriceController extends Controller
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'procedure_id' => 'required|exists:procedures,id',
+            'appointment_days' => 'required|integer|min:1',
+            'total_price' => 'required|numeric|min:0',
         ]);
 
         $price->update($request->all());
