@@ -7,6 +7,8 @@ use app\Models\Appointment;
 
 class AppointmentController extends Controller
 {
+    public $nro;
+
     public function index()
     {
         $appointments = Appointment::all();
@@ -27,11 +29,16 @@ class AppointmentController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
+        $codigo = $this->generarNroCita($request);
+
         $appointment = Appointment::create([
             'user_id' => $request->user_id,
+            'nro' => $this->nro,
+            'codigo' => $codigo,
             'type' => $request->type,
             'date' => $request->date,
             'reason' => $request->reason,
+            'status' => 1,
         ]);
 
         return response()->json($appointment, 201);
@@ -61,5 +68,45 @@ class AppointmentController extends Controller
         $appointment->delete();
 
         return response()->json(null, 204);
+    }
+
+    private function generarNroCita(Request $request)
+    {
+        $nuevoNroCitaMedica = "";
+        $date = Carbon::parse($request->date);
+        $ultimoNro = Appointment::whereYear('fecha', $date->year)
+            ->orderBy('nro', 'DESC')
+            ->first();
+        if ($ultimoNro != null)
+        {
+            $this->nro = intVal($ultimoNro->nro) + 1;
+        }
+        else
+        {
+            $this->nro = 1;
+        }
+
+        $nuevoNroCitaMedica = $nuevoNroCitaMedica . 'CM';
+
+        $nuevoNroCitaMedica .= '-' . $date->year . '-' . str_pad($this->nro, 6, '0', STR_PAD_LEFT);
+
+        return $nuevoNroCitaMedica;
+    }
+
+    public function realizarCita(Request $request)
+    {
+        $cita = Appointment::find($request->id);
+        //if ($this->user->can('caja-chica-admin.aprobar') || $cajaChica->estado != CajaChica::PENDIENTE)
+        //{
+        $cita->update([
+            'estado' => Appointment::REALIZADA,
+            'user_auth_id' => Auth::user()->id,
+        ]);
+        return response()->json($cita, 200);
+        //}
+        //else
+        //{
+        //    $this->emit('msg-error', 'Acción no autorizada!');
+        //}
     }
 }

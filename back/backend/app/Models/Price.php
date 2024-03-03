@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use app\Models\User;
+use app\Models\Procedure;
+use app\Models\Appointment;
 
 class Price extends Model
 {

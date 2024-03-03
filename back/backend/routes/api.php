@@ -70,6 +70,7 @@ Route::middleware('auth:sanctum')->group(function ()
 
 Route::post('/login', [AuthController::class, 'login'])->withoutMiddleware('auth');
 Route::post('/users/register', [UserController::class, 'register'])->withoutMiddleware('auth');
+Route::post('/users/verify-token', [UserController::class, 'verifyToken'])->withoutMiddleware('auth');
 Route::post('/users/send-email', [UserController::class, 'sendEmail'])->withoutMiddleware('auth');
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request)

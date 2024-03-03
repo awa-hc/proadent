@@ -15,9 +15,13 @@ return new class extends Migration
         {
             $table->id();
             $table->foreignId('user_id')->constrained();
+            $table->integer('nro');
+            $table->string('codigo');
             $table->integer('type');
             $table->dateTime('date');
             $table->string('reason');
+            $table->integer('status');
+            $table->integer('user_auth_id');
             $table->timestamps();
         });
     }

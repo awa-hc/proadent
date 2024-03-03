@@ -6,22 +6,19 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Validation\Rule;
+use app\Models\VerificationToken;
 
 class UserController extends Controller
 {
-    /**
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
+            'email' => 'sometimes|required_without:phone|string|email|max:255|unique:users',
+            'phone' => 'sometimes|required_without:email|string|regex:/^[0-9]+$/|max:11',
             'password' => 'required|string|min:8',
-            'password_confirmed' => 'required|string|same:password',
-            'email' => ['nullable', 'string', 'email', Rule::requiredWithout('phone'), Rule::unique('users')->whereNull('phone')],
-            'phone' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'max:8', Rule::requiredWithout('email'), Rule::unique('users')->whereNull('email')],
+            'password_confirmation' => 'required|string|same:password',
         ]);
 
         if ($validator->fails())
@@ -48,19 +45,21 @@ class UserController extends Controller
 
         ]);
 
+        $tokenverification = $this->generateToken($user->id);
+
         if ($email)
         {
-            $this->sendEmail($email);
+            $this->sendEmail($email, $tokenverification);
         }
         elseif ($phone)
         {
-            $this->sendPhone($phone);
+            $this->sendPhone($phone, $tokenverification);
         }
 
         return response()->json(['user' => $user], 201);
     }
 
-    public function sendEmail(string $email)
+    public function sendEmail(string $email, string $token)
     {
         $response = Http::withOptions([
             'verify' => false,
@@ -68,6 +67,7 @@ class UserController extends Controller
             'https://dc34sk6l-8080.brs.devtunnels.ms/email',
             [
                 'email' => $email,
+                'token' => $token
             ]
         );
         if ($response->successful())
@@ -80,7 +80,7 @@ class UserController extends Controller
         }
     }
 
-    public function sendPhone(string $phone)
+    public function sendPhone(string $phone, string $token)
     {
         $response = Http::withOptions([
             'verify' => false,
@@ -88,6 +88,7 @@ class UserController extends Controller
             'https://dc34sk6l-8080.brs.devtunnels.ms/phone',
             [
                 'phone' => $phone,
+                'token' => $token
             ]
         );
         if ($response->successful())
@@ -129,5 +130,38 @@ class UserController extends Controller
         $user->delete();
 
         return response()->json(null, 204);
+    }
+
+    public function verifyToken(Request $request)
+    {
+        $request->validate([
+            'token' => 'required|string',
+        ]);
+
+        $token = $request->input('token');
+
+        $verification = VerificationToken::where('token', $token)
+            ->first();
+
+        if (!$verification)
+        {
+            return response()->json(['message' => 'Token inválido'], 400);
+        }
+
+        $verification->delete();
+
+        return response()->json(['message' => 'Token verificado con éxito'], 200);
+    }
+
+    public function generateToken($user_id)
+    {
+        $token = str_random(60);
+
+        VerificationToken::create([
+            'user_id' => $user_id,
+            'token' => $token,
+        ]);
+
+        return response()->json(['token' => $token], 200);
     }
 }
