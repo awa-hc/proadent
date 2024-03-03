@@ -9,14 +9,26 @@ import {
   AbstractControl,
   FormBuilder,
   FormGroup,
+  FormsModule,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-
+import { MatStepperModule } from '@angular/material/stepper';
+import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
+import { MatSelectModule } from '@angular/material/select';
+import { DataService } from '../../data.service';
 @Component({
   selector: 'app-home',
   standalone: true,
-  providers: [provideNativeDateAdapter()],
+  providers: [
+    provideNativeDateAdapter(),
+    {
+      provide: STEPPER_GLOBAL_OPTIONS,
+      useValue: { showError: true },
+    },
+    [DataService],
+  ],
+
   imports: [
     MatFormFieldModule,
     MatInputModule,
@@ -24,57 +36,104 @@ import {
     MatButtonModule,
     MatCardModule,
     ReactiveFormsModule,
+    MatStepperModule,
+    FormsModule,
+    MatSelectModule,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
 export class HomeComponent {
-  timeForm!: FormGroup;
+  firstFormGroup!: FormGroup;
+  secondFormGroup!: FormGroup;
+  thirdFormGroup!: FormGroup;
 
-  constructor(private fb: FormBuilder) {}
+  hours: string[] = [
+    'MAÑANA',
+    '09:00',
+    '09:30',
+    '10:00',
+    '11:00',
+    '11:30',
+    '12:00',
+    'TARDE',
+    '15:00',
+    '15:30',
+    '16:00',
+    '16:30',
+    '17:00',
+    '17:30',
+    '18:00',
+    '18:30',
+  ];
 
-  ngOnInit(): void {
-    this.timeForm = this.fb.group({
-      time: ['', [Validators.required, this.timeRangeValidator]],
-      reason: ['', [Validators.required]],
+  dayFilter = (d: Date | null): boolean => {
+    const day = (d || new Date()).getDay();
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Ajustar las horas a 0 para comparar solo la fecha sin tener en cuenta la hora
+
+    if (!d) {
+      return false;
+    }
+
+    // Previene la selección de fechas anteriores a hoy y de los días domingo (0).
+    return d >= today && day !== 0;
+  };
+
+  constructor(private fb: FormBuilder, private dataService: DataService) {
+    this.firstFormGroup = this.fb.group({
+      firstCtrl: ['', Validators.required],
+    });
+    this.secondFormGroup = this.fb.group({
+      secondCtrl: ['', [Validators.required, this.timeRangeValidator]],
+    });
+
+    this.thirdFormGroup = this.fb.group({
+      thirdCtrl: ['', [Validators.required, Validators.maxLength(100)]],
     });
   }
 
-  timeRangeValidator(control: AbstractControl): { [key: string]: any } | null {
-    const value = control.value;
-    if (value) {
-      const hours = +value.split(':')[0];
-      const minutes = +value.split(':')[1];
-      const totalMinutes = hours * 60 + minutes;
+  timeRangeValidator(
+    control: AbstractControl
+  ): { [key: string]: boolean } | null {
+    const invalidValues = ['MAÑANA', 'TARDE'];
 
-      const isMorningValid =
-        totalMinutes >= 9 * 60 && totalMinutes <= 12 * 60 + 30;
-      const isAfternoonValid =
-        totalMinutes >= 15 * 60 && totalMinutes <= 19 * 60;
-
-      if (!isMorningValid && !isAfternoonValid) {
-        return { timeRangeInvalid: true };
-      }
+    if (control.value && invalidValues.includes(control.value.toUpperCase())) {
+      return { invalidTime: true };
     }
     return null;
   }
 
-  roundTime(event: any): void {
-    let [hour, minute] = event.target.value
-      .split(':')
-      .map((val: string) => parseInt(val, 10));
-
-    if (minute >= 15 && minute < 45) {
-      minute = 30;
-    } else if (minute < 15) {
-      minute = 0;
-    } else {
-      minute = 0;
-      hour += 1;
+  SubmitData(): void {
+    if (
+      this.firstFormGroup.invalid ||
+      this.secondFormGroup.invalid ||
+      this.thirdFormGroup.invalid
+    ) {
+      return;
     }
-    const roundedTime = `${hour.toString().padStart(2, '0')}:${minute
-      .toString()
-      .padStart(2, '0')}`;
-    this.timeForm.get('time')?.setValue(roundedTime, { emitEvent: false });
+
+    const selectedDate: Date = this.firstFormGroup.value.firstCtrl;
+
+    const year = selectedDate.getFullYear();
+    const month = selectedDate.getMonth() + 1;
+    const day = selectedDate.getDate();
+    const time = this.secondFormGroup.value.secondCtrl;
+    const [hours, minutes] = time.split(':').map(Number);
+
+    const dateTime = new Date(year, month, day, hours, minutes);
+
+    const data = {
+      user_id: 2,
+      type: 1,
+      date: dateTime.toISOString(),
+      reason: this.thirdFormGroup.value.thirdCtrl,
+    };
+    this.dataService
+      .createappointment(data, sessionStorage.getItem('token') || '')
+      .subscribe((response) => {
+        console.log(response);
+      });
   }
 }
