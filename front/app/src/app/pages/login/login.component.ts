@@ -8,6 +8,8 @@ import {
 } from '@angular/forms';
 import { MatCard, MatCardModule } from '@angular/material/card';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { DataService } from '../../data.service';
 
 @Component({
   selector: 'app-login',
@@ -19,6 +21,8 @@ import { MatFormField, MatLabel } from '@angular/material/form-field';
     MatCard,
     MatFormField,
   ],
+  providers: [DataService],
+
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
@@ -28,14 +32,32 @@ export class LoginComponent implements OnInit {
     password: ['', Validators.required],
   });
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private _snackBar: MatSnackBar,
+    private dataService: DataService
+  ) {}
 
   ngOnInit(): void {}
 
   onSubmit(): void {
-    console.log('Formulario enviado');
+    if (this.loginForm.get('email')?.invalid) {
+      this._snackBar.open('El campo email es requerido', 'Aceptar', {
+        duration: 2000,
+      });
+    }
+    if (this.loginForm.get('password')?.invalid) {
+      this._snackBar.open('El campo contraseña es requerido', 'Aceptar', {
+        duration: 2000,
+      });
+    }
+
     if (this.loginForm.valid) {
       console.log(this.loginForm.value);
+      this.dataService.login(this.loginForm.value).subscribe((response) => {
+        console.log(response);
+        sessionStorage.setItem('token', response.token);
+      });
     }
   }
 }

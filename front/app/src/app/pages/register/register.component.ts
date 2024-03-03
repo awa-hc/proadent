@@ -1,3 +1,4 @@
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
@@ -5,31 +6,108 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { DataService } from '../../data.service';
 
 @Component({
   selector: 'app-register',
   standalone: true,
   imports: [ReactiveFormsModule],
+  providers: [DataService],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',
 })
 export class RegisterComponent implements OnInit {
   registerForm!: FormGroup;
 
-  constructor(private form: FormBuilder) {}
+  constructor(
+    private form: FormBuilder,
+    private _snackBar: MatSnackBar,
+    private dataService: DataService
+  ) {}
 
   ngOnInit(): void {
-    this.registerForm = this.form.group({
-      name: ['', [Validators.required]],
-      email: ['', [Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8)]],
-      password_confirmation: [''],
-      phone: ['+591'],
-      ci: [''],
+    this.registerForm = new FormGroup({
+      name: this.form.control('', [Validators.required]),
+      email: this.form.control('', [Validators.required, Validators.email]),
+      password_confirmation: this.form.control('', [
+        Validators.required,
+        Validators.minLength(8),
+      ]),
+      password: this.form.control('', [
+        Validators.required,
+        Validators.minLength(8),
+      ]),
+      phone: this.form.control('+591', [Validators.required]),
+      ci: this.form.control('', [Validators.required]),
+      birthday: this.form.control('1990-01-01'),
     });
   }
 
   onSubmit(): void {
-    console.log('Formulario enviado');
+    if (
+      this.registerForm.get('password')?.value !==
+      this.registerForm.get('password_confirmation')?.value
+    ) {
+      this._snackBar.open('Las contraseñas no coinciden', 'Aceptar', {
+        duration: 2000,
+      });
+      return;
+    }
+
+    if (this.registerForm.invalid) {
+      if (this.registerForm.get('name')?.invalid) {
+        this._snackBar.open('El campo nombre es requerido', 'Aceptar', {
+          duration: 2000,
+        });
+        return;
+      }
+      if (this.registerForm.get('email')?.invalid) {
+        this._snackBar.open('El campo email es requerido', 'Aceptar', {
+          duration: 2000,
+        });
+      }
+      if (this.registerForm.get('password')?.invalid) {
+        this._snackBar.open(
+          'El campo contraseña es requerido o Minimo 8 Caracteres',
+          'Aceptar',
+          {
+            duration: 2000,
+          }
+        );
+        return;
+      }
+      if (this.registerForm.get('password_confirmation')?.invalid) {
+        this._snackBar.open(
+          'El campo confirmar contraseña es requerido',
+          'Aceptar',
+          {
+            duration: 2000,
+          }
+        );
+        return;
+      }
+      if (this.registerForm.get('phone')?.invalid) {
+        this._snackBar.open('El campo telefono es requerido', 'Aceptar', {
+          duration: 2000,
+        });
+        return;
+      }
+      if (this.registerForm.get('ci')?.invalid) {
+        this._snackBar.open('El campo ci es requerido', 'Aceptar', {
+          duration: 2000,
+        });
+        return;
+      }
+    }
+    if (this.registerForm.valid) {
+      this.dataService
+        .register(this.registerForm.value)
+        .subscribe((response) => {
+          console.log(response);
+        });
+
+      console.log(this.registerForm.value);
+    }
   }
 }
