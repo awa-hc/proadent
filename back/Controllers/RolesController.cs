@@ -2,6 +2,8 @@ using back.Data;
 using back.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace back.Controllers;
 
@@ -47,10 +49,23 @@ public class RoleController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Role>>> GetRoles()
+    public async Task<ActionResult> GetRoles()
     {
-        return await _context.Role.ToListAsync();
+        var rolesWithUsers = await _context.Role
+                                          .Include(r => r.Users)
+                                          .ToListAsync();
 
+        var rolesJson = rolesWithUsers.Select(role => new
+        {
+            RoleName = role.Name,
+            Users = role.Users.Select(user => new
+            {
+                UserName = user.FullName,
+                user.Ci,
+                user.Email
+            }).ToList()
+        }).ToList();
+
+        return Ok(rolesJson);
     }
-
 }

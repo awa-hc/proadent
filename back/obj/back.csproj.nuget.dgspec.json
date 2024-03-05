@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/horaciocortez/Documents/GitHub/proadent/backend/back/back.csproj": {}
+    "/Users/horaciocortez/Documents/GitHub/proadent/back/back.csproj": {}
   },
   "projects": {
-    "/Users/horaciocortez/Documents/GitHub/proadent/backend/back/back.csproj": {
+    "/Users/horaciocortez/Documents/GitHub/proadent/back/back.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/horaciocortez/Documents/GitHub/proadent/backend/back/back.csproj",
+        "projectUniqueName": "/Users/horaciocortez/Documents/GitHub/proadent/back/back.csproj",
         "projectName": "back",
-        "projectPath": "/Users/horaciocortez/Documents/GitHub/proadent/backend/back/back.csproj",
+        "projectPath": "/Users/horaciocortez/Documents/GitHub/proadent/back/back.csproj",
         "packagesPath": "/Users/horaciocortez/.nuget/packages/",
-        "outputPath": "/Users/horaciocortez/Documents/GitHub/proadent/backend/back/obj/",
+        "outputPath": "/Users/horaciocortez/Documents/GitHub/proadent/back/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/horaciocortez/.nuget/NuGet/NuGet.Config"

@@ -104,10 +104,27 @@ export class RegisterComponent implements OnInit {
       this.dataService
         .register(this.registerForm.value)
         .subscribe((response) => {
-          console.log(response);
-        });
+          if (response) {
+            console.log(response);
+            if (response.error) {
+              this._snackBar.open(response.error, 'Aceptar', {
+                duration: 10000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+                panelClass: ['error-snackbar', 'snackbar-center'],
+              });
+            }
 
-      console.log(this.registerForm.value);
+            // this._snackBar.open(
+            //   'Revisa tu email para verificarlo!',
+            //   'Aceptar',
+            //   {
+            //     duration: 10000,
+            //     verticalPosition: 'top',
+            //   }
+            // );
+          }
+        });
     }
   }
 }
