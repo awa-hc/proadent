@@ -155,8 +155,6 @@ public class AppointmentController : ControllerBase
         return Ok(appointment);
     }
 
-
-
     private async Task<string> GenerateAppointmentCode(Appointment request)
     {
         var lastAppointment = await _context.Appointment.OrderByDescending(a => a.ID).FirstOrDefaultAsync();

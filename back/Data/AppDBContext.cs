@@ -18,7 +18,7 @@ namespace back.Data
         public DbSet<Price> Price { get; set; }
         public DbSet<Clinic> Clinic { get; set; }
         public DbSet<AccountReceivable> AccountReceivable { get; set; }
-        public DbSet<AccountReceivableDetails> AccountReceivableDetails { get; set; }
+        public DbSet<AccountReceivableDetail> AccountReceivableDetail { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

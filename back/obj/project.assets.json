@@ -2982,19 +2982,19 @@
     ]
   },
   "packageFolders": {
-    "/Users/horaciocortez/.nuget/packages/": {}
+    "C:\\Users\\jpvil\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/horaciocortez/Documents/GitHub/proadent/back/back.csproj",
+      "projectUniqueName": "D:\\Documentos\\ROMJOS-dev\\proadent\\back\\back.csproj",
       "projectName": "back",
-      "projectPath": "/Users/horaciocortez/Documents/GitHub/proadent/back/back.csproj",
-      "packagesPath": "/Users/horaciocortez/.nuget/packages/",
-      "outputPath": "/Users/horaciocortez/Documents/GitHub/proadent/back/obj/",
+      "projectPath": "D:\\Documentos\\ROMJOS-dev\\proadent\\back\\back.csproj",
+      "packagesPath": "C:\\Users\\jpvil\\.nuget\\packages\\",
+      "outputPath": "D:\\Documentos\\ROMJOS-dev\\proadent\\back\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/Users/horaciocortez/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\jpvil\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -3069,7 +3069,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.201/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.201/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
