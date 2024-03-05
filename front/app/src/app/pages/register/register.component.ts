@@ -28,7 +28,7 @@ export class RegisterComponent implements OnInit {
 
   ngOnInit(): void {
     this.registerForm = new FormGroup({
-      name: this.form.control('', [Validators.required]),
+      fullname: this.form.control('', [Validators.required]),
       email: this.form.control('', [Validators.required, Validators.email]),
       password_confirmation: this.form.control('', [
         Validators.required,
@@ -56,7 +56,7 @@ export class RegisterComponent implements OnInit {
     }
 
     if (this.registerForm.invalid) {
-      if (this.registerForm.get('name')?.invalid) {
+      if (this.registerForm.get('fullname')?.invalid) {
         this._snackBar.open('El campo nombre es requerido', 'Aceptar', {
           duration: 2000,
         });

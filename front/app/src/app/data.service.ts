@@ -6,11 +6,11 @@ import { Observable, from } from 'rxjs';
   providedIn: 'root',
 })
 export class DataService {
-  private url = 'http://localhost:8000/api/';
+  private url = 'http://localhost:5062/';
   constructor(private http: HttpClient) {}
 
   register(data: any): Observable<any> {
-    let response = fetch(this.url + 'users/register/', {
+    let response = fetch(this.url + 'user/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -19,6 +19,7 @@ export class DataService {
     })
       .then((response) => response.json())
       .then((data) => {
+        console.log(data);
         return data;
       })
       .catch((error) => {
