@@ -13,7 +13,7 @@ public class User
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public string Email { get; set; }
-    public string FullName { get; set; }
+    public required string FullName { get; set; }
     public string Password { get; set; }
     public string Phone { get; set; }
     public string Ci { get; set; }

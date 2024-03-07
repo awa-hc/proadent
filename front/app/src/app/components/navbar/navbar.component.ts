@@ -1,9 +1,11 @@
 import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [],
+  imports: [MatButtonModule, MatTooltipModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
 })
@@ -17,9 +19,8 @@ export class NavbarComponent implements OnInit {
       this.updateTime();
       setInterval(() => {
         this.updateTime();
-        console.log(this.time);
         this.ngZone.run(() => {});
-      }, 10000);
+      }, 6000);
     });
   }
 

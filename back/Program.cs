@@ -1,5 +1,7 @@
+using System.Text;
 using back.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +16,21 @@ builder.Services.AddHttpClient();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true, // Asegúrate de que esta línea esté descomentada y establecida en true
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true, // Es una buena práctica validar la vida útil del token
+            ClockSkew = TimeSpan.Zero // Opcional: reduce o elimina el margen de tiempo adicional en la validación de la vida útil del token
+        };
+    });
+
+
 
 builder.Services.AddCors(options =>
 {

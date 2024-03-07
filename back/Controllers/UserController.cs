@@ -1,6 +1,7 @@
 using System.Net.Http;
 using back.Data;
 using back.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,12 +23,15 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = "admin")]
+
     public async Task<ActionResult<IEnumerable<User>>> GetUsers()
     {
         return await _context.User.ToListAsync();
     }
 
     [HttpGet("{id}")]
+    [Authorize(Roles = "admin,users")]
     public async Task<ActionResult<User>> GetUser(int id)
     {
         var user = await _context.User.FindAsync(id);
@@ -102,13 +106,9 @@ public class UserController : ControllerBase
         await SendEmailConfirmation(user);
 
         return CreatedAtAction("GetUser", new { id = user.ID }, user);
-
-
     }
-
-
-
     [HttpPut("{id}")]
+    [Authorize(Roles = "admin,users")]
     public async Task<ActionResult> PutUser(int id, [FromBody] User request)
     {
         if (id != request.ID)
@@ -144,6 +144,7 @@ public class UserController : ControllerBase
 
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "admin")]
     public async Task<ActionResult<User>> DeleteUser(int id)
     {
         var user = await _context.User.FindAsync(id);

@@ -1,5 +1,6 @@
 using back.Data;
 using back.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
@@ -9,6 +10,7 @@ namespace back.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize(Roles = "admin")]
 public class RoleController : ControllerBase
 {
     private readonly ILogger<RoleController> _logger;
