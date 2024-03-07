@@ -9,10 +9,16 @@
       <li><a href="">Inicio</a></li>
       <li><a href="">Concreta una cita</a></li>
     </ul>
+    @if(userlogged){
     <ul class="flex-grow basis-0 flex justify-end gap-5">
-      <li><a>Iniciar Sesion</a></li>
-      <li><a href="/register">Crea tu cuenta</a></li>
+      <li><a href="/profile">Mi Perfil</a></li>
     </ul>
+    } @if(!userlogged){
+    <ul class="flex-grow basis-0 flex justify-end gap-5">
+      <li><a href="/login">Iniciar Sesion</a></li>
+      <li><a href="/register">Registrarse</a></li>
+    </ul>
+    }
   </nav>
 
   <section
@@ -143,11 +149,7 @@
     </div>
   </section>
 
-  <section class="h-[calc(100vh-70vh)] w-full">
-
-    
-
-  </section>
+  <section class="h-[calc(100vh-70vh)] w-full"></section>
 
   <section
     class="w-full grid grid-cols-1 md:grid-cols-2 place-items-center justify-center text-white"

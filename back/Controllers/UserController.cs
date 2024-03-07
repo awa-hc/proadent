@@ -1,4 +1,5 @@
 using System.Net.Http;
+using System.Security.Claims;
 using back.Data;
 using back.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -27,11 +28,11 @@ public class UserController : ControllerBase
 
     public async Task<ActionResult<IEnumerable<User>>> GetUsers()
     {
-        return await _context.User.ToListAsync();
+        return await _context.User.Include(r => r.Role).ToListAsync();
     }
 
     [HttpGet("{id}")]
-    [Authorize(Roles = "admin,users")]
+    [Authorize(Roles = "admin,user")]
     public async Task<ActionResult<User>> GetUser(int id)
     {
         var user = await _context.User.FindAsync(id);
@@ -101,14 +102,14 @@ public class UserController : ControllerBase
 
         _context.User.Add(user);
         await _context.SaveChangesAsync();
-
-
-        await SendEmailConfirmation(user);
-
+        if (SendEmailConfirmation(user) == null)
+        {
+            return BadRequest(new { error = "Failed to send email verification try again later" });
+        }
         return CreatedAtAction("GetUser", new { id = user.ID }, user);
     }
     [HttpPut("{id}")]
-    [Authorize(Roles = "admin,users")]
+    [Authorize(Roles = "admin,user")]
     public async Task<ActionResult> PutUser(int id, [FromBody] User request)
     {
         if (id != request.ID)
@@ -137,6 +138,7 @@ public class UserController : ControllerBase
         request.Password = BCrypt.Net.BCrypt.HashPassword(request.Password);
         request.UpdatedAt = DateTime.Now;
         user = request;
+
         _context.Entry(user).State = EntityState.Modified;
         await _context.SaveChangesAsync();
         return Ok(user);
@@ -187,8 +189,50 @@ public class UserController : ControllerBase
         }
     }
 
+    [HttpGet("me")]
+    [Authorize]
+    public async Task<ActionResult<User>> Me()
+    {
+
+        var id = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        if (id == 0)
+        {
+            return BadRequest(new { error = "Invalid ID" });
+        }
+
+        var user = await _context.User.Include(r => r.Appointments).Include(r => r.Role).FirstOrDefaultAsync(u => u.ID == id);
+
+        if (user == null)
+        {
+            return NotFound(new { error = "User not found" });
+        }
+        var userresponse = new
+        {
+            user.FullName,
+            user.Email,
+            user.Phone,
+            user.Ci,
+            BirthDay = user.BirthDay.ToString("dd/MM/yyyy"), // Formato de fecha de nacimiento
+            CreatedAt = user.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss"), // Formato de fecha y hora de creación
+            UpdatedAt = user.UpdatedAt.ToString("dd/MM/yyyy HH:mm:ss"), // Formato de fecha y hora de actualización
+            Role = new
+            {
+                user.Role.Name,
+                user.Role.Description
+            },
+            Appointments = user.Appointments.Select(a => new
+            {
+                Date = a.Date.ToString("dd/MM/yyyy HH:mm:ss"), // Formato de fecha del compromiso
+                a.Reason,
+                CreatedAt = a.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss"), // Formato de fecha y hora de creación del compromiso
+                UpdatedAt = a.UpdatedAt.ToString("dd/MM/yyyy HH:mm:ss"), // Formato de fecha y hora de actualización del compromiso
+                a.Status
+            }).ToList()
+        };
 
 
 
+        return Ok(userresponse);
+    }
 }
 

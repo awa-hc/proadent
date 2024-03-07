@@ -60,16 +60,18 @@ public class AuthController : ControllerBase
         var claims = new[]{
             new Claim(ClaimTypes.Name, user.FullName ),
             new Claim(ClaimTypes.Role, user.Role.Name ),
+            new Claim(ClaimTypes.NameIdentifier, user.ID.ToString() ),
         };
 
         var keyString = _configuration["Jwt:Key"]; // Obtiene el valor de la configuración
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyString)); // Convierte la clave a bytes
-
+        var issuer = _configuration["Jwt:Issuer"];
+        var audience = _configuration["Jwt:Audience"];
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Jwt:Issuer")).ToString(),
-            audience: new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Jwt:Issuer")).ToString(),
+            issuer: issuer,
+            audience: audience,
             claims: claims,
             expires: DateTime.Now.AddDays(30),
             signingCredentials: creds
@@ -80,7 +82,5 @@ public class AuthController : ControllerBase
         return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
 
     }
-
-
 
 }

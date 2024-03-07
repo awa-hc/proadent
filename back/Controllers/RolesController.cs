@@ -10,7 +10,7 @@ namespace back.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-[Authorize(Roles = "admin")]
+// [Authorize(Roles = "admin")]
 public class RoleController : ControllerBase
 {
     private readonly ILogger<RoleController> _logger;
@@ -59,7 +59,8 @@ public class RoleController : ControllerBase
 
         var rolesJson = rolesWithUsers.Select(role => new
         {
-            RoleName = role.Name,
+            role.ID,
+            name = role.Name,
             Users = role.Users.Select(user => new
             {
                 UserName = user.FullName,

@@ -12,25 +12,5 @@ import { StorageService } from './storage.service';
 })
 export class AppComponent {
   title = 'app';
-  // constructor(public storage: StorageService) {
-  //   if (typeof window !== 'undefined') {
-  //     const currentTheme = storage.getItem('theme');
-  //     if (currentTheme === 'dark') {
-  //       document.body.classList.add('dark');
-  //     }
-  //   }
-  // }
-
-  // toggleTheme() {
-  //   if (typeof window !== 'undefined') {
-  //     const isDarkMode = document.body.classList.contains('dark');
-  //     if (isDarkMode) {
-  //       document.body.classList.remove('dark');
-  //       this.storage.setItem('theme', 'light');
-  //     } else {
-  //       document.body.classList.add('dark');
-  //       this.storage.setItem('theme', 'dark');
-  //     }
-  //   }
-  // }
+ 
 }

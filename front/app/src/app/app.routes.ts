@@ -21,11 +21,16 @@ import { RolesComponent } from './dashboard/config/roles/roles.component';
 import { UsersComponent } from './dashboard/config/users/users.component';
 import { AccountreciavableComponent } from './dashboard/accountreciavable/accountreciavable.component';
 import { AllComponent as AllAccountreciavable } from './dashboard/accountreciavable/all/all.component';
+import { ProfileComponent } from './pages/profile/profile.component';
 
 export const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
+  },
+  {
+    path: 'profile',
+    component: ProfileComponent,
   },
   {
     path: 'login',

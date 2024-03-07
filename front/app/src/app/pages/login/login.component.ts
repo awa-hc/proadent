@@ -10,6 +10,8 @@ import { MatCard, MatCardModule } from '@angular/material/card';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DataService } from '../../data.service';
+import { StorageService } from '../../storage.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -35,12 +37,19 @@ export class LoginComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private _snackBar: MatSnackBar,
-    private dataService: DataService
+    private dataService: DataService,
+    private storageService: StorageService,
+    private router: Router
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.storageService.getItem('token')) {
+      this.router.navigate(['/']);
+    }
+  }
 
   onSubmit(): void {
+    console.log('asdasd');
     if (this.loginForm.get('email')?.invalid) {
       this._snackBar.open('El campo email es requerido', 'Aceptar', {
         duration: 2000,
@@ -56,7 +65,7 @@ export class LoginComponent implements OnInit {
       console.log(this.loginForm.value);
       this.dataService.login(this.loginForm.value).subscribe((response) => {
         console.log(response);
-        sessionStorage.setItem('token', response.token);
+        localStorage.setItem('token', response.token);
       });
     }
   }

@@ -6,16 +6,18 @@ using Microsoft.EntityFrameworkCore;
 namespace back.Controllers;
 
 [ApiController]
-[Route("Appointment/[controller]")]
+[Route("/[controller]")]
 public class AppointmentController : ControllerBase
 {
 
     private readonly ILogger<AppointmentController> _logger;
     private readonly AppDbContext _context;
-    public AppointmentController(ILogger<AppointmentController> logger, AppDbContext context)
+    private readonly IHttpClientFactory _httpclientFactory;
+    public AppointmentController(IHttpClientFactory httpClientFactory, ILogger<AppointmentController> logger, AppDbContext context)
     {
         _logger = logger;
         _context = context;
+        _httpclientFactory = httpClientFactory;
     }
 
     [HttpGet]
@@ -25,7 +27,7 @@ public class AppointmentController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> CreateAppointment([FromBody] Appointment request)
+    public async Task<ActionResult> CreateAppointment([FromBody] AppointmentRequest request)
     {
 
         if (request.Date < DateTime.Now)
@@ -42,31 +44,26 @@ public class AppointmentController : ControllerBase
         {
             return BadRequest(new { error = "Reason must be less than 100 characters" });
         }
-
-
-
-        request.Status = "Pending";
-        request.CreatedAt = DateTime.Now;
-        request.UpdatedAt = DateTime.Now;
-        request.Code = await GenerateAppointmentCode(request);
-
-
         Appointment appointment = new()
         {
             UserID = request.UserID,
             User = user,
-            Type = request.Type,
-            Code = request.Code,
             Date = request.Date,
+            Code = await GenerateAppointmentCode(),
+            Type = "General",
+            UpdatedAt = DateTime.Now.ToUniversalTime(),
+            CreatedAt = DateTime.Now.ToUniversalTime(),
+            Status = "pending",
             Reason = request.Reason,
-            Status = request.Status,
-            CreatedAt = request.CreatedAt,
-            UpdatedAt = request.UpdatedAt
         };
 
         await _context.Appointment.AddAsync(appointment);
         await _context.SaveChangesAsync();
-        return Ok(appointment);
+        if (await SendEmailAppointmentCreated(appointment) is BadRequestObjectResult response)
+        {
+            return response;
+        }
+        return Ok(new { message = "Appointment created" });
     }
 
     [HttpGet("{id}")]
@@ -155,7 +152,7 @@ public class AppointmentController : ControllerBase
         return Ok(appointment);
     }
 
-    private async Task<string> GenerateAppointmentCode(Appointment request)
+    private async Task<string> GenerateAppointmentCode()
     {
         var lastAppointment = await _context.Appointment.OrderByDescending(a => a.ID).FirstOrDefaultAsync();
         if (lastAppointment == null)
@@ -167,5 +164,47 @@ public class AppointmentController : ControllerBase
         number++;
         return "AP-" + number.ToString("D4");
     }
+
+    private async Task<ActionResult> SendEmailAppointmentCreated(Appointment appointment)
+    {
+        var user = await _context.User.FindAsync(appointment.UserID);
+        if (user == null)
+        {
+            return BadRequest(new { error = "User not found" });
+        }
+        var client = _httpclientFactory.CreateClient();
+        var code = appointment.Code;
+        var fullName = user.FullName;
+        var date = appointment.Date;
+        var email = user.Email;
+        var url = "http://localhost:8080/appointment-created";
+        var payload = new
+        {
+            email,
+            fullName,
+            date,
+            code
+        };
+
+        try
+        {
+            var response = await client.PostAsJsonAsync(url, payload);
+            if (response.IsSuccessStatusCode)
+            {
+                return Ok(new { error = "Created Appointment email sent" });
+            }
+            else
+            {
+                return BadRequest(new { error = "Error sending email" });
+            }
+
+        }
+        catch
+        {
+            return BadRequest(new { error = "Error sending email" });
+        }
+
+    }
+
 
 }

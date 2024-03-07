@@ -15,6 +15,7 @@ func init() {
 func main() {
 	router := gin.Default()
 	emailSender := email.ConfigureSMTP()
+
 	web.RegisterRoutes(router, emailSender)
 
 	router.Run(":8080")

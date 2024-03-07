@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -17,6 +17,9 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { MatSelectModule } from '@angular/material/select';
 import { DataService } from '../../data.service';
+import GetUserIdFromToken from '../../utils/token';
+import { StorageService } from '../../storage.service';
+
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -43,10 +46,11 @@ import { DataService } from '../../data.service';
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   firstFormGroup!: FormGroup;
   secondFormGroup!: FormGroup;
   thirdFormGroup!: FormGroup;
+  userlogged: boolean = false;
 
   hours: string[] = [
     'MAÑANA',
@@ -81,7 +85,11 @@ export class HomeComponent {
     return d >= today && day !== 0;
   };
 
-  constructor(private fb: FormBuilder, private dataService: DataService) {
+  constructor(
+    private fb: FormBuilder,
+    private dataService: DataService,
+    private storageService: StorageService
+  ) {
     this.firstFormGroup = this.fb.group({
       firstCtrl: ['', Validators.required],
     });
@@ -94,6 +102,11 @@ export class HomeComponent {
     });
   }
 
+  ngOnInit(): void {
+    if (this.storageService.getItem('token')) {
+      this.userlogged = true;
+    }
+  }
   timeRangeValidator(
     control: AbstractControl
   ): { [key: string]: boolean } | null {
@@ -106,6 +119,10 @@ export class HomeComponent {
   }
 
   SubmitData(): void {
+    if (!this.userlogged) {
+      window.location.href = '/login';
+    }
+
     if (
       this.firstFormGroup.invalid ||
       this.secondFormGroup.invalid ||
@@ -115,25 +132,21 @@ export class HomeComponent {
     }
 
     const selectedDate: Date = this.firstFormGroup.value.firstCtrl;
-
     const year = selectedDate.getFullYear();
-    const month = selectedDate.getMonth() + 1;
+    const month = selectedDate.getMonth();
     const day = selectedDate.getDate();
     const time = this.secondFormGroup.value.secondCtrl;
     const [hours, minutes] = time.split(':').map(Number);
-
     const dateTime = new Date(year, month, day, hours, minutes);
+    console.log(GetUserIdFromToken(this.storageService.getItem('token') || ''));
 
     const data = {
-      user_id: 2,
-      type: 1,
+      userId: GetUserIdFromToken(this.storageService.getItem('token') || ''),
       date: dateTime.toISOString(),
       reason: this.thirdFormGroup.value.thirdCtrl,
     };
-    this.dataService
-      .createappointment(data, sessionStorage.getItem('token') || '')
-      .subscribe((response) => {
-        console.log(response);
-      });
+    this.dataService.createappointment(data).subscribe((response) => {
+      console.log(response);
+    });
   }
 }
