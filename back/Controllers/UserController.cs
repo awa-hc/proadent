@@ -1,5 +1,9 @@
+using System;
 using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 using System.Security.Claims;
+using Newtonsoft.Json;
 using back.Data;
 using back.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -167,7 +171,7 @@ public class UserController : ControllerBase
         var token = BCrypt.Net.BCrypt.HashPassword(user.Email + user.Password);
 
         var client = _httpclientFactory.CreateClient();
-        var url = "http://localhost:8080/send-email/";
+        var url = "https://dc34sk6l-8080.brs.devtunnels.ms/email";
         var payload = new { email = email, token = token };
 
         try
@@ -187,6 +191,26 @@ public class UserController : ControllerBase
         {
             return BadRequest(new { error = e.Message });
         }
+    }
+
+    [HttpGet("verify-email")]
+    public async Task<ActionResult> VerifyEmail(string email, string token)
+    {
+        var user = await _context.User.FirstOrDefaultAsync(u => u.Email == email);
+        if (user == null)
+        {
+            return BadRequest(new { error = "User not found" });
+        }
+
+        var expectedToken = BCrypt.Net.BCrypt.HashPassword(user.Email + user.Password);
+        if (token != expectedToken)
+        {
+            return BadRequest(new { error = "Invalid token" });
+        }
+
+        await _context.SaveChangesAsync();
+
+        return Ok(new { message = "Email verified successfully" });
     }
 
     [HttpGet("me")]

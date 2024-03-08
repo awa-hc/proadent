@@ -70,7 +70,7 @@ public class AccountReceivableController : ControllerBase
 
         await _context.AccountReceivable.AddAsync(accountReceivable);
         await _context.SaveChangesAsync();
-        return Ok(AccountReceivable);
+        return Ok(accountReceivable);
     }
 
     [HttpGet("{id}")]

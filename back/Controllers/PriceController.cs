@@ -45,8 +45,8 @@ public class PriceController : ControllerBase
             return BadRequest(new { error = "TotalPrice must be greater than 0" });
         }
 
-        request.CreatedAt = DateTime.Now.ToUniversalTime();
-        request.UpdatedAt = DateTime.Now.ToUniversalTime();
+        request.CreatedAt = DateTime.Now;
+        request.UpdatedAt = DateTime.Now;
 
         Price price = new()
         {
@@ -113,7 +113,7 @@ public class PriceController : ControllerBase
             return BadRequest(new { error = "TotalPrice must be greater than 0" });
         }
 
-        request.UpdatedAt = DateTime.Now.ToUniversalTime();
+        request.UpdatedAt = DateTime.Now;
         price = request;
         _context.Entry(price).State = EntityState.Modified;
         await _context.SaveChangesAsync();
@@ -133,6 +133,7 @@ public class PriceController : ControllerBase
         return Ok(new { message = "Price deleted" });
     }
 
+    [HttpPut("change-status/{id}")]
     public async Task<ActionResult> ChangeStatus(int id, [FromBody] Price request)
     {
         if (id != request.ID)
@@ -161,8 +162,8 @@ public class PriceController : ControllerBase
                 TotalPrice = request.TotalPrice,
                 Balance = request.TotalPrice,
                 Status = "Pending",
-                CreatedAt = DateTime.Now.ToUniversalTime(),
-                UpdatedAt = DateTime.Now.ToUniversalTime()
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now
             };
 
             await _context.AccountReceivable.AddAsync(accountReceivable);
@@ -178,8 +179,8 @@ public class PriceController : ControllerBase
                     AccountReceivable = accountReceivable,
                     Amount = paymentPlan[i],
                     Status = "Pending",
-                    CreatedAt = DateTime.Now.ToUniversalTime(),
-                    UpdatedAt = DateTime.Now.ToUniversalTime()
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now
                 };
                 await _context.AccountReceivableDetail.AddAsync(accountReceivableDetail);
 
@@ -187,18 +188,18 @@ public class PriceController : ControllerBase
                 {
                     UserID = request.UserID,
                     User = user,
-                    Date = request.DateTime.Now.ToUniversalTime(),
+                    Date = DateTime.Now,
                     Code = await GenerateAppointmentCode(),
                     Type = "General",
-                    UpdatedAt = DateTime.Now.ToUniversalTime(),
-                    CreatedAt = DateTime.Now.ToUniversalTime(),
+                    UpdatedAt = DateTime.Now,
+                    CreatedAt = DateTime.Now,
                     Status = "Pending",
-                    Reason = request.Reason,
+                    Reason = price.Procedure.Description,
                 };
                 await _context.Appointment.AddAsync(appointment);
             }
         }
-        price.UpdatedAt = DateTime.Now.ToUniversalTime();
+        price.UpdatedAt = DateTime.Now;
         _context.Entry(price).State = EntityState.Modified;
         await _context.SaveChangesAsync();
         return Ok(price);
@@ -230,7 +231,7 @@ public class PriceController : ControllerBase
         return "AP-" + number.ToString("D4");
     }
 
-    public int[] CalculatePaymentPlan(decimal totalAmount, int numberOfMonths)
+    private int[] CalculatePaymentPlan(decimal totalAmount, int numberOfMonths)
     {
         decimal monthlyAmount = Math.Ceiling(totalAmount / numberOfMonths);
 

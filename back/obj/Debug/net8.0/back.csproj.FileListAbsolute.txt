@@ -338,3 +338,4 @@ D:\Documentos\ROMJOS-dev\proadent\back\obj\Debug\net8.0\refint\back.dll
 D:\Documentos\ROMJOS-dev\proadent\back\obj\Debug\net8.0\back.pdb
 D:\Documentos\ROMJOS-dev\proadent\back\obj\Debug\net8.0\back.genruntimeconfig.cache
 D:\Documentos\ROMJOS-dev\proadent\back\obj\Debug\net8.0\ref\back.dll
+D:\Documentos\ROMJOS-dev\proadent\back\bin\Debug\net8.0\Newtonsoft.Json.dll
