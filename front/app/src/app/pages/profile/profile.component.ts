@@ -22,7 +22,6 @@ export class ProfileComponent implements OnInit {
   phone: string = '';
   createdat: string = '';
   updatedat: string = '';
-  role: string = '';
   roledescription: string = '';
 
   constructor(
@@ -45,7 +44,6 @@ export class ProfileComponent implements OnInit {
       this.phone = response.phone;
       this.createdat = response.createdAt;
       this.updatedat = response.updatedAt;
-      this.role = response.role.name;
       this.roledescription = response.role.description;
       this.appointments = response.appointments;
     });

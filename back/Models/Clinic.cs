@@ -1,7 +1,7 @@
+namespace back.Models;
+
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
-namespace back.Models;
 
 public class Clinic
 {
@@ -16,4 +16,6 @@ public class Clinic
     public Procedure Procedure { get; set; }
     public int PriceID { get; set; }
     public Price Price { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 }

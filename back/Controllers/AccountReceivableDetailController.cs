@@ -40,8 +40,8 @@ public class AccountReceivableDetailController : ControllerBase
         }
 
         request.Status = "Pending";
-        request.CreatedAt = DateTime.Now;
-        request.UpdatedAt = DateTime.Now;
+        request.CreatedAt = DateTime.Now.ToUniversalTime();
+        request.UpdatedAt = DateTime.Now.ToUniversalTime();
 
 
         AccountReceivableDetail AccountReceivableDetail = new()
@@ -95,7 +95,7 @@ public class AccountReceivableDetailController : ControllerBase
             return BadRequest(new { error = "TotalPrice must be greater than 0" });
         }
 
-        request.UpdatedAt = DateTime.Now;
+        request.UpdatedAt = DateTime.Now.ToUniversalTime();
         accountReceivableDetail = request;
         _context.Entry(accountReceivableDetail).State = EntityState.Modified;
         await _context.SaveChangesAsync();
@@ -133,7 +133,7 @@ public class AccountReceivableDetailController : ControllerBase
             return BadRequest(new { error = "Invalid Status" });
         }
         accountReceivableDetail.Status = request.Status;
-        accountReceivableDetail.UpdatedAt = DateTime.Now;
+        accountReceivableDetail.UpdatedAt = DateTime.Now.ToUniversalTime();
         _context.Entry(accountReceivableDetail).State = EntityState.Modified;
         await _context.SaveChangesAsync();
         return Ok(accountReceivableDetail);

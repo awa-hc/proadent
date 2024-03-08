@@ -45,8 +45,8 @@ public class PriceController : ControllerBase
             return BadRequest(new { error = "TotalPrice must be greater than 0" });
         }
 
-        request.CreatedAt = DateTime.Now;
-        request.UpdatedAt = DateTime.Now;
+        request.CreatedAt = DateTime.Now.ToUniversalTime();
+        request.UpdatedAt = DateTime.Now.ToUniversalTime();
 
         Price price = new()
         {
@@ -113,7 +113,7 @@ public class PriceController : ControllerBase
             return BadRequest(new { error = "TotalPrice must be greater than 0" });
         }
 
-        request.UpdatedAt = DateTime.Now;
+        request.UpdatedAt = DateTime.Now.ToUniversalTime();
         price = request;
         _context.Entry(price).State = EntityState.Modified;
         await _context.SaveChangesAsync();
@@ -132,5 +132,125 @@ public class PriceController : ControllerBase
         await _context.SaveChangesAsync();
         return Ok(new { message = "Price deleted" });
     }
+
+    public async Task<ActionResult> ChangeStatus(int id, [FromBody] Price request)
+    {
+        if (id != request.ID)
+        {
+            return BadRequest(new { error = "Invalid ID" });
+        }
+        var price = await _context.Price.FindAsync(id);
+        if (price == null)
+        {
+            return NotFound(new { error = "Price not found" });
+        }
+        if (request.Status != "Pending" && request.Status != "Confirmed" && request.Status != "Cancelled")
+        {
+            return BadRequest(new { error = "Invalid Status" });
+        }
+        price.Status = request.Status;
+        if (request.Status == "Confirmed")
+        {
+            string codeAccount = await GenerateAccountReceivableCode();
+            AccountReceivable accountReceivable = new AccountReceivable
+            {
+                UserID = request.UserID,
+                Code = codeAccount,
+                AppointmentDays = request.AppointmentDays,
+                ProceduresDescription = price.Procedure.Description,
+                TotalPrice = request.TotalPrice,
+                Balance = request.TotalPrice,
+                Status = "Pending",
+                CreatedAt = DateTime.Now.ToUniversalTime(),
+                UpdatedAt = DateTime.Now.ToUniversalTime()
+            };
+
+            await _context.AccountReceivable.AddAsync(accountReceivable);
+
+            int[] paymentPlan = new int[1];
+            paymentPlan = CalculatePaymentPlan(request.TotalPrice, request.AppointmentDays);
+            var user = await _context.User.FindAsync(request.UserID);
+            for (int i = 0; i < request.AppointmentDays; i++)
+            {
+                AccountReceivableDetail accountReceivableDetail = new()
+                {
+                    AccountReceivableID = accountReceivable.ID,
+                    AccountReceivable = accountReceivable,
+                    Amount = paymentPlan[i],
+                    Status = "Pending",
+                    CreatedAt = DateTime.Now.ToUniversalTime(),
+                    UpdatedAt = DateTime.Now.ToUniversalTime()
+                };
+                await _context.AccountReceivableDetail.AddAsync(accountReceivableDetail);
+
+                Appointment appointment = new()
+                {
+                    UserID = request.UserID,
+                    User = user,
+                    Date = request.DateTime.Now.ToUniversalTime(),
+                    Code = await GenerateAppointmentCode(),
+                    Type = "General",
+                    UpdatedAt = DateTime.Now.ToUniversalTime(),
+                    CreatedAt = DateTime.Now.ToUniversalTime(),
+                    Status = "Pending",
+                    Reason = request.Reason,
+                };
+                await _context.Appointment.AddAsync(appointment);
+            }
+        }
+        price.UpdatedAt = DateTime.Now.ToUniversalTime();
+        _context.Entry(price).State = EntityState.Modified;
+        await _context.SaveChangesAsync();
+        return Ok(price);
+    }
+
+    private async Task<string> GenerateAccountReceivableCode()
+    {
+        var lastAccountReceivable = await _context.AccountReceivable.OrderByDescending(a => a.ID).FirstOrDefaultAsync();
+        if (lastAccountReceivable == null)
+        {
+            return "AR-0001";
+        }
+        string[] code = lastAccountReceivable.Code.Split("-");
+        int number = int.Parse(code[1]);
+        number++;
+        return "AR-" + number.ToString("D4");
+    }
+
+    private async Task<string> GenerateAppointmentCode()
+    {
+        var lastAppointment = await _context.Appointment.OrderByDescending(a => a.ID).FirstOrDefaultAsync();
+        if (lastAppointment == null)
+        {
+            return "AP-0001";
+        }
+        string[] code = lastAppointment.Code.Split("-");
+        int number = int.Parse(code[1]);
+        number++;
+        return "AP-" + number.ToString("D4");
+    }
+
+    public int[] CalculatePaymentPlan(decimal totalAmount, int numberOfMonths)
+    {
+        decimal monthlyAmount = Math.Ceiling(totalAmount / numberOfMonths);
+
+        int[] paymentPlan = new int[numberOfMonths];
+
+        decimal remainingAmount = totalAmount;
+        for (int i = 0; i < numberOfMonths; i++)
+        {
+            if (i == numberOfMonths - 1)
+            {
+                paymentPlan[i] = (int)remainingAmount;
+            }
+            else
+            {
+                paymentPlan[i] = (int)Math.Min(monthlyAmount, remainingAmount);
+                remainingAmount -= paymentPlan[i];
+            }
+        }
+        return paymentPlan;
+    }
+
 
 }

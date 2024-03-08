@@ -119,18 +119,18 @@
           }
         }
       },
-      "Microsoft.AspNetCore.OpenApi/7.0.11": {
+      "Microsoft.AspNetCore.OpenApi/8.0.2": {
         "type": "package",
         "dependencies": {
           "Microsoft.OpenApi": "1.4.3"
         },
         "compile": {
-          "lib/net7.0/Microsoft.AspNetCore.OpenApi.dll": {
+          "lib/net8.0/Microsoft.AspNetCore.OpenApi.dll": {
             "related": ".xml"
           }
         },
         "runtime": {
-          "lib/net7.0/Microsoft.AspNetCore.OpenApi.dll": {
+          "lib/net8.0/Microsoft.AspNetCore.OpenApi.dll": {
             "related": ".xml"
           }
         },
@@ -1347,18 +1347,18 @@
         "microsoft.aspnetcore.http.features.nuspec"
       ]
     },
-    "Microsoft.AspNetCore.OpenApi/7.0.11": {
-      "sha512": "+3PUTx950QiUzw9CriQfCpfv11cJ0uMzQrDS3BwkEDlRduAh/2+1mxDy2S8wS1j3zyQpjbtQU0fFeWTU8j0Ljg==",
+    "Microsoft.AspNetCore.OpenApi/8.0.2": {
+      "sha512": "59xQBsH+2at3+rrLazCNbaLhS1gmMY2fT1rSxa116EQ2oCbdULerytaYtr0h5iew+BVwJZNsWgvU3fOpt74DCA==",
       "type": "package",
-      "path": "microsoft.aspnetcore.openapi/7.0.11",
+      "path": "microsoft.aspnetcore.openapi/8.0.2",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "Icon.png",
         "THIRD-PARTY-NOTICES.TXT",
-        "lib/net7.0/Microsoft.AspNetCore.OpenApi.dll",
-        "lib/net7.0/Microsoft.AspNetCore.OpenApi.xml",
-        "microsoft.aspnetcore.openapi.7.0.11.nupkg.sha512",
+        "lib/net8.0/Microsoft.AspNetCore.OpenApi.dll",
+        "lib/net8.0/Microsoft.AspNetCore.OpenApi.xml",
+        "microsoft.aspnetcore.openapi.8.0.2.nupkg.sha512",
         "microsoft.aspnetcore.openapi.nuspec"
       ]
     },
@@ -3283,26 +3283,26 @@
       "BCrypt.Net-Next >= 4.0.3",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 8.0.2",
       "Microsoft.AspNetCore.Cors >= 2.2.0",
-      "Microsoft.AspNetCore.OpenApi >= 7.0.11",
+      "Microsoft.AspNetCore.OpenApi >= 8.0.2",
       "Microsoft.EntityFrameworkCore.Design >= 8.0.2",
       "Npgsql.EntityFrameworkCore.Postgresql >= 8.0.2",
       "Swashbuckle.AspNetCore >= 6.5.0"
     ]
   },
   "packageFolders": {
-    "/Users/horaciocortez/.nuget/packages/": {}
+    "C:\\Users\\jpvil\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/horaciocortez/Documents/GitHub/proadent/back/back.csproj",
+      "projectUniqueName": "D:\\Documentos\\ROMJOS-dev\\proadent\\back\\back.csproj",
       "projectName": "back",
-      "projectPath": "/Users/horaciocortez/Documents/GitHub/proadent/back/back.csproj",
-      "packagesPath": "/Users/horaciocortez/.nuget/packages/",
-      "outputPath": "/Users/horaciocortez/Documents/GitHub/proadent/back/obj/",
+      "projectPath": "D:\\Documentos\\ROMJOS-dev\\proadent\\back\\back.csproj",
+      "packagesPath": "C:\\Users\\jpvil\\.nuget\\packages\\",
+      "outputPath": "D:\\Documentos\\ROMJOS-dev\\proadent\\back\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/Users/horaciocortez/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\jpvil\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -3345,7 +3345,7 @@
           },
           "Microsoft.AspNetCore.OpenApi": {
             "target": "Package",
-            "version": "[7.0.11, )"
+            "version": "[8.0.2, )"
           },
           "Microsoft.EntityFrameworkCore.Design": {
             "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
@@ -3381,7 +3381,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.201/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.201/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

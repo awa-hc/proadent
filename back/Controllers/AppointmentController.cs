@@ -30,7 +30,7 @@ public class AppointmentController : ControllerBase
     public async Task<ActionResult> CreateAppointment([FromBody] AppointmentRequest request)
     {
 
-        if (request.Date < DateTime.Now)
+        if (request.Date < DateTime.Now.ToUniversalTime())
         {
             return BadRequest(new { error = "Date must be in the future" });
         }
@@ -53,7 +53,7 @@ public class AppointmentController : ControllerBase
             Type = "General",
             UpdatedAt = DateTime.Now.ToUniversalTime(),
             CreatedAt = DateTime.Now.ToUniversalTime(),
-            Status = "pending",
+            Status = "Pending",
             Reason = request.Reason,
         };
 
@@ -93,7 +93,7 @@ public class AppointmentController : ControllerBase
             return NotFound(new { error = "Appointment not found" });
         }
 
-        if (request.Date < DateTime.Now)
+        if (request.Date < DateTime.Now.ToUniversalTime())
         {
             return BadRequest(new { error = "Date must be in the future" });
         }
@@ -108,7 +108,7 @@ public class AppointmentController : ControllerBase
             return BadRequest(new { error = "Reason must be less than 100 characters" });
         }
 
-        request.UpdatedAt = DateTime.Now;
+        request.UpdatedAt = DateTime.Now.ToUniversalTime();
         appointment = request;
         _context.Entry(appointment).State = EntityState.Modified;
         await _context.SaveChangesAsync();
@@ -146,7 +146,7 @@ public class AppointmentController : ControllerBase
             return BadRequest(new { error = "Invalid Status" });
         }
         appointment.Status = request.Status;
-        appointment.UpdatedAt = DateTime.Now;
+        appointment.UpdatedAt = DateTime.Now.ToUniversalTime();
         _context.Entry(appointment).State = EntityState.Modified;
         await _context.SaveChangesAsync();
         return Ok(appointment);

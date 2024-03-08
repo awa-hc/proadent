@@ -49,12 +49,12 @@ public class AccountReceivableController : ControllerBase
 
         request.Balance = request.TotalPrice;
         request.Status = "Pending";
-        request.CreatedAt = DateTime.Now;
-        request.UpdatedAt = DateTime.Now;
-        request.Code = await GenerateAccountReceivableCode(request);
+        request.CreatedAt = DateTime.Now.ToUniversalTime();
+        request.UpdatedAt = DateTime.Now.ToUniversalTime();
+        request.Code = await GenerateAccountReceivableCode();
 
 
-        AccountReceivable AccountReceivable = new()
+        AccountReceivable accountReceivable = new()
         {
             UserID = request.UserID,
             User = user,
@@ -68,7 +68,7 @@ public class AccountReceivableController : ControllerBase
             UpdatedAt = request.UpdatedAt
         };
 
-        await _context.AccountReceivable.AddAsync(AccountReceivable);
+        await _context.AccountReceivable.AddAsync(accountReceivable);
         await _context.SaveChangesAsync();
         return Ok(AccountReceivable);
     }
@@ -117,7 +117,7 @@ public class AccountReceivableController : ControllerBase
             return BadRequest(new { error = "TotalPrice must be greater than 0" });
         }
 
-        request.UpdatedAt = DateTime.Now;
+        request.UpdatedAt = DateTime.Now.ToUniversalTime();
         accountReceivable = request;
         _context.Entry(accountReceivable).State = EntityState.Modified;
         await _context.SaveChangesAsync();
@@ -155,13 +155,13 @@ public class AccountReceivableController : ControllerBase
             return BadRequest(new { error = "Invalid Status" });
         }
         accountReceivable.Status = request.Status;
-        accountReceivable.UpdatedAt = DateTime.Now;
+        accountReceivable.UpdatedAt = DateTime.Now.ToUniversalTime();
         _context.Entry(accountReceivable).State = EntityState.Modified;
         await _context.SaveChangesAsync();
         return Ok(accountReceivable);
     }
 
-    private async Task<string> GenerateAccountReceivableCode(AccountReceivable request)
+    private async Task<string> GenerateAccountReceivableCode()
     {
         var lastAccountReceivable = await _context.AccountReceivable.OrderByDescending(a => a.ID).FirstOrDefaultAsync();
         if (lastAccountReceivable == null)

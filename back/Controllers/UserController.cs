@@ -136,7 +136,7 @@ public class UserController : ControllerBase
             return BadRequest("Phone must be at least 8 characters");
         }
         request.Password = BCrypt.Net.BCrypt.HashPassword(request.Password);
-        request.UpdatedAt = DateTime.Now;
+        request.UpdatedAt = DateTime.Now.ToUniversalTime();
         user = request;
 
         _context.Entry(user).State = EntityState.Modified;
