@@ -230,6 +230,8 @@ public class UserController : ControllerBase
         {
             return NotFound(new { error = "User not found" });
         }
+
+
         var userresponse = new
         {
             user.FullName,
@@ -237,8 +239,8 @@ public class UserController : ControllerBase
             user.Phone,
             user.Ci,
             BirthDay = user.BirthDay.ToString("dd/MM/yyyy"), // Formato de fecha de nacimiento
-            CreatedAt = user.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss"), // Formato de fecha y hora de creación
-            UpdatedAt = user.UpdatedAt.ToString("dd/MM/yyyy HH:mm:ss"), // Formato de fecha y hora de actualización
+            CreatedAt = ConvertToTimeZone(user.CreatedAt, "SA Western Standard Time").ToString("dd/MM/yyyy HH:mm:ss"),
+            UpdatedAt = ConvertToTimeZone(user.UpdatedAt, "SA Western Standard Time").ToString("dd/MM/yyyy HH:mm:ss"),
             Role = new
             {
                 user.Role.Name,
@@ -246,17 +248,47 @@ public class UserController : ControllerBase
             },
             Appointments = user.Appointments.Select(a => new
             {
-                Date = a.Date.ToString("dd/MM/yyyy HH:mm:ss"), // Formato de fecha del compromiso
+                Date = ConvertToTimeZone(a.Date, "SA Western Standard Time").ToString("dd/MM/yyyy HH:mm"),
                 a.Reason,
-                CreatedAt = a.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss"), // Formato de fecha y hora de creación del compromiso
-                UpdatedAt = a.UpdatedAt.ToString("dd/MM/yyyy HH:mm:ss"), // Formato de fecha y hora de actualización del compromiso
+                CreatedAt = ConvertToTimeZone(a.CreatedAt, "SA Western Standard Time").ToString("dd/MM/yyyy HH:mm:ss"),
+                UpdatedAt = ConvertToTimeZone(a.UpdatedAt, "SA Western Standard Time").ToString("dd/MM/yyyy HH:mm:ss"),
                 a.Status
             }).ToList()
         };
 
-
-
         return Ok(userresponse);
     }
+
+
+    [HttpPut("update-userrole/{id}")]
+    public async Task<ActionResult> UpdateUserRole(int id, [FromBody] UpdateUserRoleRequest request)
+    {
+        var user = await _context.User.FindAsync(id);
+        if (user == null)
+        {
+            return NotFound(new { error = "User not found" });
+        }
+        if (request.RoleID == 0)
+        {
+            return BadRequest(new { error = "Role ID is required" });
+        }
+        var role = await _context.Role.FindAsync(request.RoleID);
+        if (role == null)
+        {
+            return NotFound(new { error = "Role not found" });
+        }
+        user.RoleID = request.RoleID;
+        _context.Entry(user).State = EntityState.Modified;
+        await _context.SaveChangesAsync();
+        return Ok(new { message = "User Role updated" });
+    }
+
+
+    private DateTime ConvertToTimeZone(DateTime dateTime, string timeZoneId)
+    {
+        var timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+        return TimeZoneInfo.ConvertTimeFromUtc(dateTime, timeZoneInfo);
+    }
+
 }
 

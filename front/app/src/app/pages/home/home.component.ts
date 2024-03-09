@@ -17,9 +17,9 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { MatSelectModule } from '@angular/material/select';
 import { DataService } from '../../data.service';
-import GetUserIdFromToken from '../../utils/token';
+import GetUserIdFromToken, { GetRoleFromToken } from '../../utils/token';
 import { StorageService } from '../../storage.service';
-import { GetRoleFromToken } from '../../utils/token';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -59,8 +59,8 @@ export class HomeComponent implements OnInit {
     '09:00',
     '09:30',
     '10:00',
-    '11:00',
     '10:30',
+    '11:00',
     '11:30',
     '12:00',
     'TARDE',
@@ -91,7 +91,8 @@ export class HomeComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private dataService: DataService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private router: Router
   ) {
     this.firstFormGroup = this.fb.group({
       firstCtrl: ['', Validators.required],
@@ -128,7 +129,7 @@ export class HomeComponent implements OnInit {
 
   SubmitData(): void {
     if (!this.userlogged) {
-      window.location.href = '/login';
+      this.router.navigate(['/login']);
     }
 
     if (

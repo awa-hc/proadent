@@ -71,4 +71,25 @@ public class RoleController : ControllerBase
 
         return Ok(rolesJson);
     }
+    [HttpPut("{id}")]
+    public async Task<ActionResult> UpdateRole(int id, [FromBody] Role request)
+    {
+        var role = await _context.Role.FindAsync(id);
+        if (role == null)
+        {
+            return NotFound(new { error = "Role not found" });
+        }
+        if (string.IsNullOrEmpty(request.Name))
+        {
+            return BadRequest(new { error = "Role name are required" });
+        }
+        if (string.IsNullOrEmpty(request.Description))
+        {
+            return BadRequest(new { error = "Role Description are required" });
+        }
+        role.Name = request.Name;
+        role.Description = request.Description;
+        await _context.SaveChangesAsync();
+        return Ok(new { message = "Role Updated successfully" });
+    }
 }
