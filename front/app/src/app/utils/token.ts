@@ -21,3 +21,15 @@ export default function GetUserIdFromToken(token: string): number | null {
   }
   return null;
 }
+
+export function GetRoleFromToken(token: string): string | null {
+  const payload = getTokenPayload(token);
+  if (payload) {
+    const role =
+      payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+    console.log(role);
+    return role;
+  }
+  return null;
+}
+//   }

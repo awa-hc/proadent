@@ -1,7 +1,8 @@
 import { Component, NgZone, OnInit } from '@angular/core';
 import { NavbarComponent } from '../components/navbar/navbar.component';
 import { StorageService } from '../storage.service';
-import { RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -10,8 +11,9 @@ import { RouterModule } from '@angular/router';
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
-export class DashboardComponent {
-  constructor(public storage: StorageService) {
+export class DashboardComponent implements OnInit {
+  welcomeContent: boolean = false;
+  constructor(public storage: StorageService, private router: Router) {
     if (typeof window !== 'undefined') {
       const currentTheme = storage.getItem('theme');
       if (currentTheme === 'dark') {
@@ -19,6 +21,11 @@ export class DashboardComponent {
       }
     }
   }
+
+  ngOnInit() {
+    this.welcomeContent = this.router.url === '/dashboard';
+  }
+
   toggleTheme() {
     if (typeof window !== 'undefined') {
       const isDarkMode = document.body.classList.contains('dark');

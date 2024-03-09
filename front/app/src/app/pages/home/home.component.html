@@ -11,6 +11,9 @@
     </ul>
     @if(userlogged){
     <ul class="flex-grow basis-0 flex justify-end gap-5">
+      @if(userAdmin){
+      <li><a href="/dashboard">Admin</a></li>
+      }
       <li><a href="/profile">Mi Perfil</a></li>
     </ul>
     } @if(!userlogged){

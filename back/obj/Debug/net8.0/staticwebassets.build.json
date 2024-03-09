@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "cYZvIzfpV+FXDKYz/jrXIUzIXKC64OrLB2sAgqppD4Q=",
+  "Hash": "5Qg4y3rM0gyNhM4upaFI8e0MKLSMzAJP7PZ2WQ1+97o=",
   "Source": "back",
   "BasePath": "_content/back",
   "Mode": "Default",
@@ -8,9 +8,9 @@
   "ReferencedProjectsConfiguration": [],
   "DiscoveryPatterns": [
     {
-      "Name": "back\\wwwroot",
+      "Name": "back/wwwroot",
       "Source": "back",
-      "ContentRoot": "D:\\Documentos\\ROMJOS-dev\\proadent\\back\\wwwroot\\",
+      "ContentRoot": "/Users/horaciocortez/Documents/GitHub/proadent/back/wwwroot/",
       "BasePath": "_content/back",
       "Pattern": "**"
     }

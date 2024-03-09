@@ -64,8 +64,8 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.valid) {
       console.log(this.loginForm.value);
       this.dataService.login(this.loginForm.value).subscribe((response) => {
-        console.log(response);
         localStorage.setItem('token', response.token);
+        this.router.navigate(['/']);
       });
     }
   }

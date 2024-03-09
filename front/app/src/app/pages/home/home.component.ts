@@ -19,6 +19,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { DataService } from '../../data.service';
 import GetUserIdFromToken from '../../utils/token';
 import { StorageService } from '../../storage.service';
+import { GetRoleFromToken } from '../../utils/token';
 
 @Component({
   selector: 'app-home',
@@ -51,6 +52,7 @@ export class HomeComponent implements OnInit {
   secondFormGroup!: FormGroup;
   thirdFormGroup!: FormGroup;
   userlogged: boolean = false;
+  userAdmin: boolean = false;
 
   hours: string[] = [
     'MAÑANA',
@@ -58,6 +60,7 @@ export class HomeComponent implements OnInit {
     '09:30',
     '10:00',
     '11:00',
+    '10:30',
     '11:30',
     '12:00',
     'TARDE',
@@ -104,6 +107,11 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.storageService.getItem('token')) {
+      if (
+        GetRoleFromToken(this.storageService.getItem('token') || '') === 'admin'
+      ) {
+        this.userAdmin = true;
+      }
       this.userlogged = true;
     }
   }
