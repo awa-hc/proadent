@@ -1,1 +1,92 @@
-<p>edit works!</p>
+<div class="text-black dark:text-white h-full w-full px-10" #contentToConvert>
+  <div class="flex justify-evenly items-center mb-2">
+    <p class="text-xl flex-grow basis-0">Codigo: {{ appointmentcode }}</p>
+  </div>
+  <div class="border px-4 py-2 border-black dark:border-white border-dotted">
+    <p>Fecha de la cita: {{ date }}</p>
+    <p>Creada el: {{ createdAt }}</p>
+    <p>Actualizada el: {{ updatedAt }}</p>
+    <p>Razon de la cita: {{ reason }}</p>
+    <p>Fecha de nacimiento: {{ userBirthDay }}</p>
+    <p>Nombre: {{ userName }}</p>
+    <p>Carnet de identidad: {{ userCI }}</p>
+    <p>
+      <a href="mailto:{{ userEmail }}">Email: {{ userEmail }}</a>
+    </p>
+    <p>Telefono: {{ userPhone }}</p>
+    <p class="pl-1 py-1 rounded" [style]="getAppointmentStyle(status)">
+      Estado:
+      {{ status === "pending" ? "Pendiente" : "" }}
+      {{ status === "completed" ? "Completada" : "" }}
+      {{ status === "cancelled" ? "Cancelada" : "" }}
+      {{ status === "confirmed" ? "Confirmada" : "" }}
+    </p>
+    @if(status === "pending" || status === "confirmed" ){
+
+    <span class="underline">Acciones</span>
+    }
+    <div class="flex justify-evenly my-2">
+      @if(status == "pending"){
+      <button
+        (click)="changestatusappointment(appointmentcode, 'confirmed')"
+        class="px-2 py-1 bg-blue-500 rounded-lg text-white hover:bg-blue-700"
+      >
+        @if(isLoading){
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="icon icon-tabler icons-tabler-outline icon-tabler-loader-3"
+        >
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M3 12a9 9 0 0 0 9 9a9 9 0 0 0 9 -9a9 9 0 0 0 -9 -9" />
+          <path d="M17 12a5 5 0 1 0 -5 5" />
+        </svg>
+        } Confirmar cita
+      </button>
+      <button
+        (click)="changestatusappointment(appointmentcode, 'cancelled')"
+        class="px-2 py-1 bg-red rounded-lg text-white hover:bg-red/80"
+      >
+        Cancelar cita
+      </button>
+      } @if(status =="confirmed"){
+      <button
+        (click)="changestatusappointment(appointmentcode, 'completed')"
+        class="px-2 py-1 bg-green-500 rounded-lg text-white flex gap-1 justify-center items-center"
+      >
+        @if(isLoading){
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="icon icon-tabler animate-spin icons-tabler-outline icon-tabler-loader-3"
+        >
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M3 12a9 9 0 0 0 9 9a9 9 0 0 0 9 -9a9 9 0 0 0 -9 -9" />
+          <path d="M17 12a5 5 0 1 0 -5 5" />
+        </svg>
+        } Completar cita
+      </button>
+      <button
+        (click)="changestatusappointment(appointmentcode, 'cancelled')"
+        class="px-2 py-1 bg-red rounded-lg text-white"
+      >
+        Cancelar cita
+      </button>
+      }
+    </div>
+  </div>
+</div>

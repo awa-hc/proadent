@@ -1,9 +1,4 @@
-using System;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using System.Security.Claims;
-using Newtonsoft.Json;
 using back.Data;
 using back.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -250,8 +245,8 @@ public class UserController : ControllerBase
             {
                 Date = ConvertToTimeZone(a.Date, "SA Western Standard Time").ToString("dd/MM/yyyy HH:mm"),
                 a.Reason,
-                CreatedAt = ConvertToTimeZone(a.CreatedAt, "SA Western Standard Time").ToString("dd/MM/yyyy HH:mm:ss"),
-                UpdatedAt = ConvertToTimeZone(a.UpdatedAt, "SA Western Standard Time").ToString("dd/MM/yyyy HH:mm:ss"),
+                CreatedAt = ConvertToTimeZone(a.CreatedAt, "SA Western Standard Time").ToString("dd/MM/yyyy HH:mm"),
+                UpdatedAt = ConvertToTimeZone(a.UpdatedAt, "SA Western Standard Time").ToString("dd/MM/yyyy HH:mm"),
                 a.Status
             }).ToList()
         };
@@ -281,6 +276,29 @@ public class UserController : ControllerBase
         _context.Entry(user).State = EntityState.Modified;
         await _context.SaveChangesAsync();
         return Ok(new { message = "User Role updated" });
+    }
+
+    [HttpGet("all")]
+    public async Task<ActionResult> GetAllUsers()
+    {
+        var users = await _context.User.Include(r => r.Role).ToListAsync();
+        if (users == null)
+        {
+            return NotFound(new { error = "users not founded" });
+        }
+
+        var userfilter = users.Select(user => new
+        {
+            user.Ci,
+            user.Email,
+            user.FullName,
+            CreatedAt = ConvertToTimeZone(user.CreatedAt, "SA Western Standard Time").ToString("dd/MM/yyyy HH:mm"),
+            UpdatedAt = ConvertToTimeZone(user.UpdatedAt, "SA Western Standard Time").ToString("dd/MM/yyyy HH:mm"),
+            role = user.Role.Name,
+            user.BirthDay,
+            user.Phone,
+        });
+        return Ok(userfilter);
     }
 
 

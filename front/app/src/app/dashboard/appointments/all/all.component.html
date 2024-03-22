@@ -1,1 +1,61 @@
-<p>all works!</p>
+<div class="hidden md:grid md:grid-cols-1 xl:grid-cols-4 gap-5 px-10">
+  <div
+    class="text-left xl:col-span-3 flex flex-col items-center justify-center"
+  >
+    <table class="">
+      <thead
+        class="[&>tr>th]:px-3 [&>tr>th]:py-1 border border-black dark:border-white rounded-lg"
+      >
+        <tr
+          class="[&>th]:border [&>th]:border-dashed [&>th]:border-black dark:[&>th]:border-white"
+        >
+          <th>Codigo</th>
+          <th>Actualizacion</th>
+          <th>Fecha</th>
+          <th>Razon</th>
+          <th>Nombre</th>
+          <th>C.I.</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody
+        class="border border-black dark:border-white [&>tr>td]:px-3 [&>tr>td]:py-1"
+      >
+        @for(appointment of data; track appointment){
+        <tr
+          class="[&>td]:border [&>td]:border-dashed [&>td]:border-black dark:[&>td]:border-white hover:bg-slate-500 hover:text-white dark:hover:bg-slate-500"
+          (click)="changelocation(appointment.code)"
+        >
+          <td class="text-nowrap">{{ appointment.code }}</td>
+          <td>{{ appointment.updatedAt }}</td>
+          <td>{{ appointment.date }}</td>
+          <td class="text-wrap">{{ appointment.reason }}</td>
+          <td>{{ appointment.userName }}</td>
+          <td>{{ appointment.userCi }}</td>
+          <td [style]="getAppointmentStyle(appointment.status)">
+            {{ appointment.status === "pending" ? "Pendiente" : "" }}
+            {{ appointment.status === "completed" ? "Completada" : "" }}
+            {{ appointment.status === "cancelled" ? "Cancelada" : "" }}
+            {{ appointment.status === "confirmed" ? "Confirmada" : "" }}
+          </td>
+        </tr>
+
+        }
+      </tbody>
+    </table>
+    <div>paginator</div>
+  </div>
+
+  <div
+    class="md:cols-span-1 w-full flex flex-col items-center justify-center h-max px-10"
+  >
+    <span>Citas programadas:</span>
+    <div class="xl:w-full xl:h-auto w-2/3 h-auto bg-gray">
+      asdas
+    </div>
+  </div>
+</div>
+
+<div class="block md:hidden">
+  <div>sdasd</div>
+</div>

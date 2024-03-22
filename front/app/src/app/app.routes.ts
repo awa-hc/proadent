@@ -69,7 +69,7 @@ export const routes: Routes = [
             component: CreateAppointment,
           },
           {
-            path: 'edit/:id',
+            path: 'edit/:code',
             component: EditAppointment,
           },
           {
@@ -78,7 +78,7 @@ export const routes: Routes = [
           },
           {
             path: '',
-            redirectTo: 'create',
+            redirectTo: 'all',
             pathMatch: 'full',
           },
         ],
@@ -121,6 +121,11 @@ export const routes: Routes = [
           {
             path: 'users',
             component: UsersComponent,
+          },
+          {
+            path: '',
+            redirectTo: 'users',
+            pathMatch: 'full',
           },
         ],
       },

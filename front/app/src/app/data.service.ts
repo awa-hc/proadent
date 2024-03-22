@@ -86,4 +86,75 @@ export class DataService {
       });
     return from(response);
   }
+
+  getallappointments(): Observable<any> {
+    let response = fetch(this.url + 'appointment', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + this.storageService.getItem('token'),
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        return data;
+      })
+      .catch((error) => {
+        return error;
+      });
+    return from(response);
+  }
+  getappointmentbycode(code: string): Observable<any> {
+    let response = fetch(this.url + 'appointment/' + code, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + this.storageService.getItem('token'),
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        return data;
+      })
+      .catch((error) => {
+        return error;
+      });
+    return from(response);
+  }
+  udpateappointmentstatus(code: string, data: any): Observable<any> {
+    let response = fetch(this.url + 'appointment/status/' + code, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + this.storageService.getItem('token'),
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        return data;
+      })
+      .then((error) => {
+        return error;
+      });
+    return from(response);
+  }
+
+  getUsers(): Observable<any> {
+    let response = fetch(this.url + 'user/all', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + this.storageService.getItem('token'),
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        return data;
+      })
+      .then((error) => {
+        return error;
+      });
+    return from(response);
+  }
 }

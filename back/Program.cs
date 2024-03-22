@@ -69,6 +69,7 @@ builder.Services.AddCors(options =>
         builder =>
         {
             builder.WithOrigins("http://localhost:4200")
+            // builder.WithOrigins("https://proadent.vercel.app")
             .AllowAnyHeader()
             .AllowAnyMethod();
         });

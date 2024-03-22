@@ -1,0 +1,8 @@
+/* Estilo opcional para las fechas en el calendario */
+.mat-calendar-body-cell {
+  cursor: default; /* Cursor predeterminado */
+}
+
+.mat-calendar-body-selected {
+  background-color: #f0f0f0; /* Color de fondo de las fechas seleccionadas */
+}

@@ -31,14 +31,7 @@ func SendEmailAppointmentCreated(emailSender port.EmailSender) gin.HandlerFunc {
 			return
 		}
 
-		// Obtiene la ubicación de Bolivia (La Paz como ejemplo)
-		boliviaLocation, err := time.LoadLocation("America/La_Paz")
-		if err != nil {
-			fmt.Println("Error loading Bolivia location:", err)
-			return
-		}
-		boliviaTime := parsedDate.In(boliviaLocation)
-		formattedDate := boliviaTime.Format("January 2, 2006 at 15:04")
+		formattedDate := parsedDate.Format("January 2, 2006 at 15:04")
 		htmlTemplate := `
 		<!DOCTYPE html>
 		<html>
@@ -66,10 +59,10 @@ func SendEmailAppointmentCreated(emailSender port.EmailSender) gin.HandlerFunc {
 		<body>
 			<h1>Appointment Created</h1>	
 			<p>Dear ` + req.Fullname + `</p>
-			<p>Your appointment has been confirmed for ` + formattedDate + `</p>
+			<p>Your appointment has been created for ` + formattedDate + `</p>
 			<p>Appointment Code: ` + req.Code + `</p>
 			<p>Thank you for choosing our service</p>
-			<p><a href="https://www.google.com/calendar/render?action=TEMPLATE&text=Proadent+Appointment+` + req.Fullname + `&date=` + formattedDate + `&details=Code+Appointment%3A+` + req.Code + `+&location=Online+Meeting&sf=true&output=xml" target="_blank" style="background-color:#4CAF50; color:white; padding:10px 15px; text-align:center; text-decoration:none; display:inline-block;">Add to Google Calendar</a></p>
+			<p><a href="https://www.google.com/calendar/render?action=TEMPLATE&text=Proadent+Appointment+` + req.Fullname + `&date=` + req.DateTime + `&details=Code+Appointment%3A+` + req.Code + `+&location=Online+Meeting&sf=true&output=xml" target="_blank" style="background-color:#4CAF50; color:white; padding:10px 15px; text-align:center; text-decoration:none; display:inline-block;">Add to Google Calendar</a></p>
 
 		</body>
 		</html>
@@ -92,7 +85,7 @@ func SendEmailAppointmentCreated(emailSender port.EmailSender) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"message": "Appointment created email sended"})
+		c.JSON(http.StatusOK, gin.H{"message": "Appointment created email sent"})
 
 	}
 }

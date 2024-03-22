@@ -1,4 +1,11 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -20,6 +27,7 @@ import { DataService } from '../../data.service';
 import GetUserIdFromToken, { GetRoleFromToken } from '../../utils/token';
 import { StorageService } from '../../storage.service';
 import { Router } from '@angular/router';
+import { fadeInOutAnimation } from '../../components/Animations/animations';
 
 @Component({
   selector: 'app-home',
@@ -46,6 +54,7 @@ import { Router } from '@angular/router';
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
+  animations: [fadeInOutAnimation],
 })
 export class HomeComponent implements OnInit {
   firstFormGroup!: FormGroup;
@@ -146,14 +155,16 @@ export class HomeComponent implements OnInit {
     const day = selectedDate.getDate();
     const time = this.secondFormGroup.value.secondCtrl;
     const [hours, minutes] = time.split(':').map(Number);
-    const dateTime = new Date(year, month, day, hours, minutes);
-    console.log(GetUserIdFromToken(this.storageService.getItem('token') || ''));
+    const dateTime = new Date(Date.UTC(year, month, day, hours, minutes));
+    // console.log(GetUserIdFromToken(this.storageService.getItem('token') || ''));
 
+    console.log(dateTime);
     const data = {
       userId: GetUserIdFromToken(this.storageService.getItem('token') || ''),
       date: dateTime.toISOString(),
       reason: this.thirdFormGroup.value.thirdCtrl,
     };
+    console.log(data);
     this.dataService.createappointment(data).subscribe((response) => {
       console.log(response);
     });

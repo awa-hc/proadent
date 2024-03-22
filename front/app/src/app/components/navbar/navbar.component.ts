@@ -57,7 +57,7 @@ export class NavbarComponent implements OnInit {
 
   getUserDetails(): void {
     this._dataService.getuserinfo().subscribe((data) => {
-      console.log(data);
+      // console.log(data);
       this.user = data;
     });
   }

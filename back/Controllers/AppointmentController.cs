@@ -23,7 +23,23 @@ public class AppointmentController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Appointment>>> GetAppointments()
     {
-        return await _context.Appointment.ToListAsync();
+        var allappointments = await _context.Appointment.Include(r => r.User).ToListAsync();
+        var filtredresponse = allappointments.Select(appointment => new
+        {
+
+            appointment.Code,
+            appointment.Status,
+            date = (appointment.Date).ToString("dd/MM/yyyy HH:mm"),
+            createdAt = ConvertToTimeZone(appointment.CreatedAt, "SA Western Standard Time").ToString("dd/MM/yyyy HH:mm"),
+            updatedAt = ConvertToTimeZone(appointment.UpdatedAt, "SA Western Standard Time").ToString("dd/MM/yyyy HH:mm"),
+            appointment.Reason,
+            UserCi = appointment.User.Ci,
+            UserPhone = appointment.User.Phone,
+            UserEmail = appointment.User.Email,
+            UserName = appointment.User.FullName,
+        }).ToList();
+        return Ok(filtredresponse);
+
     }
 
     [HttpPost]
@@ -53,7 +69,7 @@ public class AppointmentController : ControllerBase
             Type = "General",
             UpdatedAt = DateTime.Now.ToUniversalTime(),
             CreatedAt = DateTime.Now.ToUniversalTime(),
-            Status = "Pending",
+            Status = "pending",
             Reason = request.Reason,
         };
 
@@ -66,19 +82,39 @@ public class AppointmentController : ControllerBase
         return Ok(new { message = "Appointment created" });
     }
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Appointment>> GetAppointment(int id)
+    [HttpGet("{code}")]
+    public async Task<ActionResult<Appointment>> GetAppointment(string code)
     {
-        var appointment = await _context.Appointment.FindAsync(id);
+        var appointment = await _context.Appointment.Include(u => u.User).FirstOrDefaultAsync(a => a.Code == code);
+
 
         if (appointment == null)
         {
             return NotFound(new { error = "Appointment not found" });
         }
 
-        return Ok(appointment);
+        var response = new
+        {
+            appointment.Code,
+            date = appointment.Date.ToString("dd/MM/yyyy HH:mm"),
+            createdAt = ConvertToTimeZone(appointment.CreatedAt, "SA Western Standard Time").ToString("dd/MM/yyyy HH:mm"),
+            updatedAt = ConvertToTimeZone(appointment.UpdatedAt, "SA Western Standard Time").ToString("dd/MM/yyyy HH:mm"),
+            appointment.Status,
+            appointment.Reason,
+            userEmail = appointment.User.Email,
+            userName = appointment.User.FullName,
+            userPhone = appointment.User.Phone,
+            userCI = appointment.User.Ci,
+            userBirthDay = appointment.User.BirthDay,
+
+
+        };
+
+        return Ok(response);
 
     }
+
+
 
     [HttpPut("edit/{id}")]
     public async Task<ActionResult> PutAppointment(int id, [FromBody] Appointment request)
@@ -129,28 +165,62 @@ public class AppointmentController : ControllerBase
     }
 
 
-    [HttpPut("status/{id}")]
-    public async Task<ActionResult> ChangeStatus(int id, [FromBody] Appointment request)
+    [HttpPut("status/{code}")]
+    public async Task<ActionResult> ChangeStatus(string code, [FromBody] UpdateAppointmentRequest request)
     {
-        if (id != request.ID)
-        {
-            return BadRequest(new { error = "Invalid ID" });
-        }
-        var appointment = await _context.Appointment.FindAsync(id);
+        var appointment = await _context.Appointment.FirstOrDefaultAsync(a => a.Code == code);
         if (appointment == null)
         {
             return NotFound(new { error = "Appointment not found" });
         }
-        if (request.Status != "Pending" && request.Status != "Confirmed" && request.Status != "Cancelled" && request.Status == "Completed")
+
+        if (request.status == appointment.Status)
         {
-            return BadRequest(new { error = "Invalid Status" });
+            return BadRequest(new { error = "Error update status" });
         }
-        appointment.Status = request.Status;
+
+
+        switch (request.status.ToLower())
+        {
+            case "pending":
+            case "confirmed":
+            case "cancelled":
+            case "completed":
+                appointment.Status = request.status;
+                break;
+            default:
+                return BadRequest(new { error = "invalid status" });
+        }
         appointment.UpdatedAt = DateTime.Now.ToUniversalTime();
-        _context.Entry(appointment).State = EntityState.Modified;
-        await _context.SaveChangesAsync();
-        return Ok(appointment);
+        try
+        {
+
+            if (await SendEmailAppointmentStatusChanged(appointment) is BadRequestObjectResult response)
+            {
+                return response;
+            }
+            await _context.SaveChangesAsync();
+
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!AppointmentExists(appointment.ID))
+            {
+                return NotFound(new { error = "Appointment not found" });
+            }
+            else
+            {
+                throw;
+            }
+
+        }
+        return Ok(new { message = "Successfully" });
     }
+    private bool AppointmentExists(int id)
+    {
+        return _context.Appointment.Any(a => a.ID == id);
+    }
+
 
     private async Task<string> GenerateAppointmentCode()
     {
@@ -163,6 +233,51 @@ public class AppointmentController : ControllerBase
         int number = int.Parse(code[1]);
         number++;
         return "AP-" + number.ToString("D4");
+    }
+
+    private async Task<ActionResult> SendEmailAppointmentStatusChanged(Appointment appointment)
+    {
+        var user = await _context.User.FindAsync(appointment.UserID);
+        if (user == null)
+        {
+            return BadRequest(new { error = "User not found" });
+        }
+
+        var client = _httpclientFactory.CreateClient();
+        var status = appointment.Status;
+        var date = appointment.Date;
+        var email = user.Email;
+        var code = appointment.Code;
+        var fullName = user.FullName;
+        var url = "http://localhost:8080/appointment-status";
+        var payload = new
+        {
+            code,
+            status,
+            date,
+            updatedAt = ConvertToTimeZone(appointment.UpdatedAt, "SA Western Standard Time").ToString("dd/MM/yyyy HH:mm"),
+            appointment.Reason,
+            email,
+            fullName
+        };
+
+        try
+        {
+            var response = await client.PostAsJsonAsync(url, payload);
+            if (response.IsSuccessStatusCode)
+            {
+                return Ok(new { message = "Update status email sent" });
+            }
+            else
+            {
+                return BadRequest(new { error = "error sending email" });
+            }
+        }
+        catch
+        {
+            return BadRequest(new { error = "erorr sending email" });
+        }
+
     }
 
     private async Task<ActionResult> SendEmailAppointmentCreated(Appointment appointment)
@@ -191,7 +306,7 @@ public class AppointmentController : ControllerBase
             var response = await client.PostAsJsonAsync(url, payload);
             if (response.IsSuccessStatusCode)
             {
-                return Ok(new { error = "Created Appointment email sent" });
+                return Ok(new { message = "Created Appointment email sent" });
             }
             else
             {
@@ -205,6 +320,15 @@ public class AppointmentController : ControllerBase
         }
 
     }
+
+
+    private DateTime ConvertToTimeZone(DateTime dateTime, string timeZoneId)
+    {
+        var timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+        return TimeZoneInfo.ConvertTimeFromUtc(dateTime, timeZoneInfo);
+    }
+
+
 
 
 }

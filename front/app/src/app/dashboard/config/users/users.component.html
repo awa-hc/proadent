@@ -1,1 +1,39 @@
-<p>users works!</p>
+<div class="px-6 py-2">
+  <table>
+    <thead
+      class="[&>tr>th]:px-3 [&>tr>th]:py-1 border border-black dark:border-white rounded-lg"
+    >
+      <tr
+        class="[&>th]:border [&>th]:border-dashed [&>th]:border-black dark:[&>th]:border-white"
+      >
+        <th>Ci</th>
+        <th>Email</th>
+        <th>Telefono</th>
+        <th>Nombre</th>
+        <th>Rol</th>
+        <th>Registrado el</th>
+        <th>Ultima Actualizacion</th>
+        <th>Fecha de Nacimiento</th>
+      </tr>
+    </thead>
+    <tbody
+      class="border border-black dark:border-white [&>tr>td]:px-3 [&>tr>td]:py-1"
+    >
+      @for(user of users; track user){
+
+      <tr
+        class="text-center [&>td]:border [&>td]:border-dashed [&>td]:border-black dark:[&>td]:border-white hover:bg-slate-500 hover:text-white dark:hover:bg-slate-500"
+      >
+        <td>{{ user.ci }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.phone }}</td>
+        <td>{{ user.fullName }}</td>
+        <td>{{ user.role }}</td>
+        <td>{{ user.createdAt }}</td>
+        <td>{{ user.updatedAt }}</td>
+        <td>{{ user.birthDay }}</td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>

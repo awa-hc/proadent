@@ -10,7 +10,6 @@ function getTokenPayload(token: string): any {
 
 export default function GetUserIdFromToken(token: string): number | null {
   const payload = getTokenPayload(token);
-  console.log(payload);
   if (payload) {
     const userId =
       payload[
@@ -27,7 +26,6 @@ export function GetRoleFromToken(token: string): string | null {
   if (payload) {
     const role =
       payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
-    console.log(role);
     return role;
   }
   return null;
