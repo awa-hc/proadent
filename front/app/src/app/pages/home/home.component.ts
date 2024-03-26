@@ -173,7 +173,7 @@ export class HomeComponent implements OnInit {
       reason: this.thirdFormGroup.value.thirdCtrl,
     };
     this.dataService.createappointment(data).subscribe((response) => {
-      if (response.message) {
+      if (response.message == 'Appointment Created') {
         this.formSuccessfully = true;
         this.isLoadingDate = false;
         this._snackBar.open('appointment created successfully', 'aceptar', {
