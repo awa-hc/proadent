@@ -4,6 +4,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { DataService } from '../../data.service';
 import { StorageService } from '../../storage.service';
 import { Router } from '@angular/router';
+import { translateYAnimation } from '../Animations/animations';
 
 @Component({
   selector: 'app-navbar',
@@ -12,6 +13,7 @@ import { Router } from '@angular/router';
   providers: [DataService],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
+  animations: [translateYAnimation],
 })
 export class NavbarComponent implements OnInit {
   time = { dayname: '', day: '', time: '', month: '' };
@@ -41,9 +43,7 @@ export class NavbarComponent implements OnInit {
   updateTime(): void {
     const now = new Date();
     this.time.dayname = now.toLocaleDateString('es', { weekday: 'long' });
-
     this.time.day = now.toLocaleDateString('es', { day: '2-digit' });
-
     this.time.time = now.toLocaleTimeString('es', {
       hour: '2-digit',
       minute: '2-digit',
@@ -69,8 +69,7 @@ export class NavbarComponent implements OnInit {
     this._router.navigate(['/']);
   }
 
-  toggleMenu(){
+  toggleMenu() {
     this.mobileMenu = !this.mobileMenu;
   }
-
 }

@@ -28,6 +28,7 @@ import GetUserIdFromToken, { GetRoleFromToken } from '../../utils/token';
 import { StorageService } from '../../storage.service';
 import { Router } from '@angular/router';
 import { fadeInOutAnimation } from '../../components/Animations/animations';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-home',
@@ -62,6 +63,11 @@ export class HomeComponent implements OnInit {
   thirdFormGroup!: FormGroup;
   userlogged: boolean = false;
   userAdmin: boolean = false;
+  contactForm: any = {};
+  isLoading: boolean = false;
+  isLoadingDate: boolean = false;
+  formSuccessfully: boolean = false;
+  formError: boolean = false;
 
   hours: string[] = [
     'MAÑANA',
@@ -101,7 +107,9 @@ export class HomeComponent implements OnInit {
     private fb: FormBuilder,
     private dataService: DataService,
     private storageService: StorageService,
-    private router: Router
+    private router: Router,
+    private _snackBar: MatSnackBar,
+    private _storageService: StorageService
   ) {
     this.firstFormGroup = this.fb.group({
       firstCtrl: ['', Validators.required],
@@ -148,6 +156,7 @@ export class HomeComponent implements OnInit {
     ) {
       return;
     }
+    this.isLoadingDate = true;
 
     const selectedDate: Date = this.firstFormGroup.value.firstCtrl;
     const year = selectedDate.getFullYear();
@@ -158,15 +167,53 @@ export class HomeComponent implements OnInit {
     const dateTime = new Date(Date.UTC(year, month, day, hours, minutes));
     // console.log(GetUserIdFromToken(this.storageService.getItem('token') || ''));
 
-    console.log(dateTime);
     const data = {
       userId: GetUserIdFromToken(this.storageService.getItem('token') || ''),
       date: dateTime.toISOString(),
       reason: this.thirdFormGroup.value.thirdCtrl,
     };
-    console.log(data);
     this.dataService.createappointment(data).subscribe((response) => {
-      console.log(response);
+      if (response.message) {
+        this.formSuccessfully = true;
+        this.isLoadingDate = false;
+        this._snackBar.open('appointment created successfully', 'aceptar', {
+          duration: 3000,
+        });
+      }
+      if (response.error) {
+        this.formError = true;
+        this._snackBar.open('internal server error', 'aceptar', {
+          duration: 3000,
+        });
+      }
+      this.isLoadingDate = false;
+    });
+  }
+
+  logout() {
+    this._storageService.removeItem('token');
+    this.router.navigate(['/login']);
+  }
+
+  SubmitContact() {
+    this.isLoading = true;
+    console.log(this.contactForm);
+    this.dataService.contactForm(this.contactForm).subscribe((response) => {
+      if (response.message) {
+        this._snackBar.open('Consulta enviada correctamente', 'Aceptar', {
+          duration: 2000,
+        });
+      }
+      if (response.error) {
+        this._snackBar.open(
+          `ocurrio un error inesperado, vuelve intentar mas tarde`,
+          'cerrar',
+          {
+            duration: 2000,
+          }
+        );
+      }
+      this.isLoading = false;
     });
   }
 }

@@ -21,7 +21,7 @@ public class RoleController : ControllerBase
         _context = context;
     }
     [HttpPost]
-    public async Task<ActionResult<Role>> RegisterRole([FromBody] Role request)
+    public async Task<ActionResult<Role>> RegisterRole([FromBody] CreateRoleRequest request)
     {
 
         var existingRole = await _context.Role.FirstOrDefaultAsync(r => r.Name == request.Name);
@@ -42,7 +42,7 @@ public class RoleController : ControllerBase
         Role role = new()
         {
             Name = request.Name,
-            Description = request.Description
+            Description = request.Description,
         };
 
         _context.Role.Add(role);

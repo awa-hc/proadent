@@ -255,10 +255,10 @@ public class UserController : ControllerBase
     }
 
 
-    [HttpPut("update-userrole/{id}")]
-    public async Task<ActionResult> UpdateUserRole(int id, [FromBody] UpdateUserRoleRequest request)
+    [HttpPut("update-userrole/{ci}")]
+    public async Task<ActionResult> UpdateUserRole(string ci, [FromBody] UpdateUserRoleRequest request)
     {
-        var user = await _context.User.FindAsync(id);
+        var user = await _context.User.FirstOrDefaultAsync(u => u.Ci == ci);
         if (user == null)
         {
             return NotFound(new { error = "User not found" });

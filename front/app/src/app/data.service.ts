@@ -9,6 +9,7 @@ import { response } from 'express';
 })
 export class DataService {
   private url = 'http://localhost:5062/';
+  private urlservices = `http://localhost:8080/`;
   constructor(
     private http: HttpClient,
     private storageService: StorageService
@@ -145,6 +146,42 @@ export class DataService {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + this.storageService.getItem('token'),
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        return data;
+      })
+      .then((error) => {
+        return error;
+      });
+    return from(response);
+  }
+
+  contactForm(data: any): Observable<any> {
+    let response = fetch(this.urlservices + `contact-form`, {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        return data;
+      })
+      .then((error) => {
+        return error;
+      });
+    return from(response);
+  }
+
+  getroles(): Observable<any> {
+    let response = fetch(this.url + 'Role', {
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json',
         Authorization: 'Bearer ' + this.storageService.getItem('token'),
       },
     })

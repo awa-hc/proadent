@@ -121,8 +121,8 @@
       </svg>
     </button>
     @if(mobileMenu){
-
     <ul
+      [@translateY]
       class="z-20 absolute top-0 mt-12 bg-white [&>li]:text-sm text-gray-800 dark:bg-gray dark:text-white rounded shadow-lg py-2 w-max [&>li]:py-1 [&>li]:px-2 text-left dark:border dark:border-dashed dark:border-white"
     >
       <a
@@ -294,6 +294,7 @@
       @if(userProfile){
 
       <ul
+        [@translateY]
         class="absolute right-0 mt-2 bg-white [&>li]:text-sm text-gray-800 dark:bg-gray dark:text-white rounded shadow-lg py-2 w-max [&>li]:py-1 [&>li]:px-2 text-left dark:border dark:border-dashed dark:border-white"
       >
         <li>{{ user.fullName ? user.fullName : "cargando..." }}</li>

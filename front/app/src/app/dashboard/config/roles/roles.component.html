@@ -1,1 +1,54 @@
-<p>roles works!</p>
+<div class="p-2">
+  <button class="py-2 mb-2 px-4 rounded-lg border-black bg-red text-white">
+    Asignar rol a usuario
+  </button>
+
+  <button mat-button>Open dialog</button>
+
+  <table
+    class="p-4 w-full text-center border rounded-lg border-black dark:border-white"
+  >
+    <thead>
+      <tr>
+        <th class="border-r border-dashed border-black dark:border-white p-1">
+          Id
+        </th>
+        <th class="border-r border-dashed border-black dark:border-white p-1">
+          Rol
+        </th>
+        <th>Usuarios</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for(rol of roles; track rol){
+
+      <tr class="border-t border-black dark:border-white">
+        <td class="border-r border-dashed border-black dark:border-white p-1">
+          {{ rol.id }}
+        </td>
+        <td class="border-r border-dashed border-black dark:border-white p-1">
+          {{ rol.name }}
+        </td>
+
+        <td
+          class="text-left flex items-baseline ml-5 justify-center flex-col p-1"
+        >
+          @if(rol.users.length > 0){
+
+          <ul>
+            @for(user of rol.users;track user){
+            <li class="list-disc">{{ user.userName }} - {{ user.ci }}</li>
+            }
+          </ul>
+          } @else if (rol.users.length ===0) {
+          <ul>
+            <li class="">🚫 No hay usuarios con este rol asignado</li>
+          </ul>
+          }
+        </td>
+      </tr>
+
+      }
+    </tbody>
+  </table>
+</div>

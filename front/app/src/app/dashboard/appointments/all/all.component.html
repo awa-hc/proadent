@@ -2,7 +2,7 @@
   <div
     class="text-left xl:col-span-3 flex flex-col items-center justify-center"
   >
-    <table class="">
+    <table>
       <thead
         class="[&>tr>th]:px-3 [&>tr>th]:py-1 border border-black dark:border-white rounded-lg"
       >
@@ -50,12 +50,54 @@
     class="md:cols-span-1 w-full flex flex-col items-center justify-center h-max px-10"
   >
     <span>Citas programadas:</span>
-    <div class="xl:w-full xl:h-auto w-2/3 h-auto bg-gray">
-      asdas
-    </div>
+    <div class="xl:w-full xl:h-auto w-2/3 h-auto bg-gray">asdas</div>
   </div>
 </div>
 
 <div class="block md:hidden">
-  <div>sdasd</div>
+  <div
+    class="text-left xl:col-span-3 flex flex-col items-center justify-center"
+  >
+    <div
+      class="border border-black dark:border-white [&>tr>td]:px-3 [&>tr>td]:py-1"
+    >
+      @for(appointment of data; track appointment){
+      <div
+        (click)="changelocation(appointment.code)"
+        class="p-2 text-sm flex justify-evenly border-y border-white hover:bg-slate-500"
+      >
+        <section
+          class="text-center flex items-center px-1 border-r border-dashed border-white text-nowrap"
+        >
+          {{ appointment.code }}
+        </section>
+        <div class="flex-grow ml-2 basis-0 text-nowrap flex flex-col">
+          <span class="underline text-[10px]">Actualizacion</span>
+          <span>{{ appointment.updatedAt }}</span>
+          <span class="underline text-[10px]">fecha de la cita</span>
+          <span>{{ appointment.date }}</span>
+          <span class="text-wrap">{{ appointment.reason }}</span>
+        </div>
+        <div
+          class="flex-grow basis-0 flex flex-col border-l pl-2 border-dashed border-white"
+        >
+          <span class="underline">Usuario</span>
+          <span>{{ appointment.userName }}</span>
+          <span>{{ appointment.userCi }}</span>
+          <span
+            [style]="getAppointmentStyle(appointment.status)"
+            class="rounded-sm p-1"
+          >
+            {{ appointment.status === "pending" ? "Pendiente" : "" }}
+            {{ appointment.status === "completed" ? "Completada" : "" }}
+            {{ appointment.status === "cancelled" ? "Cancelada" : "" }}
+            {{ appointment.status === "confirmed" ? "Confirmada" : "" }}
+          </span>
+        </div>
+      </div>
+
+      }
+    </div>
+    <div>paginator</div>
+  </div>
 </div>

@@ -1,0 +1,31 @@
+# fly.toml app configuration file generated for proadentservice on 2024-03-22T19:14:08-03:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'proadentservice'
+primary_region = 'scl'
+
+[build]
+  [build.args]
+    GO_VERSION = '1.21.1'
+
+[env]
+  PORT = '8080'
+  EMAIL_FROM='horaciocortez@perfect-systems.net'
+  EMAIL_PASSWORD='Duk3517@'
+  EMAIL_PORT=587
+  EMAIL_HOST='smtp.hostinger.com'
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
