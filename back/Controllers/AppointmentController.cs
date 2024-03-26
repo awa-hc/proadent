@@ -249,7 +249,7 @@ public class AppointmentController : ControllerBase
         var email = user.Email;
         var code = appointment.Code;
         var fullName = user.FullName;
-        var url = "http://localhost:8080/appointment-status";
+        var url = "https://proadentservicess.fly.dev/appointment-status";
         var payload = new
         {
             code,
@@ -292,7 +292,7 @@ public class AppointmentController : ControllerBase
         var fullName = user.FullName;
         var date = appointment.Date;
         var email = user.Email;
-        var url = "http://localhost:8080/appointment-created";
+        var url = "https://proadentservicess.fly.dev/appointment-created";
         var payload = new
         {
             email,

@@ -15,7 +15,8 @@ RUN dotnet publish -c Release -o /app
 # final stage/image
 FROM mcr.microsoft.com/dotnet/aspnet:${DOTNET_SDK_VERSION}
 ENV ASPNETCORE_URLS http://+:5062
-ENV HTTP_PORTS = 8080
+ENV HTTP_PORTS = 5062
+ENV HTTP_PORT = 5062
 ENV ASPNETCORE_ENVIRONMENT Production
 EXPOSE 5062
 WORKDIR /app
