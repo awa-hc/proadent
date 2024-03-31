@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace back.Controllers;
 
 [ApiController]
-[Route("AccountReceivableDetail/[controller]")]
+[Route("[controller]")]
 
 
 public class AccountReceivableDetailController : ControllerBase
@@ -29,7 +29,7 @@ public class AccountReceivableDetailController : ControllerBase
     public async Task<ActionResult> CreateAccountReceivableDetail([FromBody] AccountReceivableDetail request)
     {
 
-        var accountReceivable = await _context.AccountReceivable.FindAsync(request.AccountReceivableID);
+        var accountReceivable = await _context.AccountReceivable.FirstOrDefaultAsync(a => a.Code == request.AccountReceivableCode);
         if (accountReceivable == null)
         {
             return BadRequest(new { error = "AccountReceivable not found" });
@@ -39,14 +39,14 @@ public class AccountReceivableDetailController : ControllerBase
             return BadRequest(new { error = "Amount must be greater than 0" });
         }
 
-        request.Status = "Pending";
+        request.Status = "pending";
         request.CreatedAt = DateTime.Now.ToUniversalTime();
         request.UpdatedAt = DateTime.Now.ToUniversalTime();
 
 
         AccountReceivableDetail AccountReceivableDetail = new()
         {
-            AccountReceivableID = request.AccountReceivableID,
+            AccountReceivableCode = request.AccountReceivableCode,
             AccountReceivable = accountReceivable,
             Amount = request.Amount,
             Status = request.Status,
@@ -85,7 +85,7 @@ public class AccountReceivableDetailController : ControllerBase
         {
             return BadRequest(new { error = "AccountReceivableDetail not found" });
         }
-        var accountReceivable = await _context.AccountReceivable.FindAsync(request.AccountReceivableID);
+        var accountReceivable = await _context.AccountReceivable.FirstOrDefaultAsync(a => a.Code == request.AccountReceivableCode);
         if (accountReceivable == null)
         {
             return BadRequest(new { error = "AccountReceivable not found" });

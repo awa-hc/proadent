@@ -9,7 +9,7 @@ public class AccountReceivable
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int ID { get; set; }
-    public int UserID { get; set; }
+    public string UserCI { get; set; }
     public User User { get; set; }
     public string Code { get; set; }
     public int AppointmentDays { get; set; }

@@ -61,6 +61,7 @@ public class AuthController : ControllerBase
             new Claim(ClaimTypes.Name, user.FullName ),
             new Claim(ClaimTypes.Role, user.Role.Name ),
             new Claim(ClaimTypes.NameIdentifier, user.ID.ToString() ),
+            new Claim(ClaimTypes.Authentication, user.Ci)
         };
 
         var keyString = _configuration["Jwt:Key"]; // Obtiene el valor de la configuración

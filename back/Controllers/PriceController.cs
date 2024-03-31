@@ -1,3 +1,4 @@
+using System.Data;
 using back.Data;
 using back.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -6,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace back.Controllers;
 
 [ApiController]
-[Route("Price/[controller]")]
+[Route("[controller]")]
 public class PriceController : ControllerBase
 {
     private readonly ILogger<PriceController> _logger;
@@ -24,14 +25,14 @@ public class PriceController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> CreatePrice([FromBody] Price request)
+    public async Task<ActionResult> CreatePrice([FromBody] PriceRequest request)
     {
-        var user = await _context.User.FindAsync(request.UserID);
-        var procedure = await _context.Procedure.FindAsync(request.ProcedureID);
+        var user = await _context.User.FirstOrDefaultAsync(u => u.Ci == request.UserCI);
         if (user == null)
         {
             return BadRequest(new { error = "User not found" });
         }
+        var procedure = await _context.Procedure.FindAsync(request.ProcedureID);
         if (procedure == null)
         {
             return BadRequest(new { error = "Procedure not found" });
@@ -44,25 +45,22 @@ public class PriceController : ControllerBase
         {
             return BadRequest(new { error = "TotalPrice must be greater than 0" });
         }
-
-        request.CreatedAt = DateTime.Now;
-        request.UpdatedAt = DateTime.Now;
-
         Price price = new()
         {
-            UserID = request.UserID,
+            UserCI = request.UserCI,
             User = user,
             ProcedureID = request.ProcedureID,
             Procedure = procedure,
+            Status = request.Status,
             AppointmentDays = request.AppointmentDays,
             TotalPrice = request.TotalPrice,
-            CreatedAt = request.CreatedAt,
-            UpdatedAt = request.UpdatedAt
+            CreatedAt = DateTime.Now.ToUniversalTime(),
+            UpdatedAt = DateTime.Now.ToUniversalTime()
         };
 
         await _context.Price.AddAsync(price);
         await _context.SaveChangesAsync();
-        return Ok(price);
+        return Ok(new { message = "price created successfully id:", price.ID });
     }
 
     [HttpGet("{id}")]
@@ -78,6 +76,41 @@ public class PriceController : ControllerBase
         return Ok(price);
 
     }
+    [HttpGet("user/{ci}")]
+    public async Task<ActionResult<Price>> GetUserPrice(string ci)
+    {
+        // Validar que el parámetro ci se proporciona
+        if (string.IsNullOrWhiteSpace(ci))
+        {
+            return BadRequest(new { error = "Cédula de identidad no proporcionada." });
+        }
+
+        // Buscar el usuario por cédula
+        var user = await _context.User.FirstOrDefaultAsync(u => u.Ci == ci);
+        if (user == null)
+        {
+            return BadRequest(new { error = "Usuario no encontrado." });
+        }
+
+        var userPrices = await _context.Price.Where(p => p.UserCI == user.Ci).Include(u => u.User).Include(p => p.Procedure).ToListAsync();
+
+        var userresponse = userPrices.Select(Price => new
+        {
+            Price.ID,
+            userCi = Price.UserCI,
+            userEmail = Price.User.Email,
+            userName = Price.User.FullName,
+            procedure = Price.Procedure.Name,
+            procedureDetails = Price.Procedure.Description,
+            Price.CreatedAt,
+            Price.UpdatedAt,
+            Price.AppointmentDays,
+            Price.Status
+        });
+        return Ok(userresponse);
+    }
+
+
 
     [HttpPut("edit/{id}")]
     public async Task<ActionResult> PutPrice(int id, [FromBody] Price request)
@@ -92,7 +125,7 @@ public class PriceController : ControllerBase
             return BadRequest(new { error = "Price not found" });
         }
 
-        var user = await _context.User.FindAsync(request.UserID);
+        var user = await _context.User.FirstOrDefaultAsync(u => u.Ci == request.UserCI);
         if (user == null)
         {
             return BadRequest(new { error = "User not found" });
@@ -134,72 +167,75 @@ public class PriceController : ControllerBase
     }
 
     [HttpPut("change-status/{id}")]
-    public async Task<ActionResult> ChangeStatus(int id, [FromBody] Price request)
+    public async Task<ActionResult> ChangeStatus(int id, [FromBody] UpdatePriceStatus request)
     {
-        if (id != request.ID)
-        {
-            return BadRequest(new { error = "Invalid ID" });
-        }
-        var price = await _context.Price.FindAsync(id);
+        var price = await _context.Price.Include(p => p.Procedure).FirstOrDefaultAsync(p => p.ID == id);
+
         if (price == null)
         {
             return NotFound(new { error = "Price not found" });
         }
-        if (request.Status != "Pending" && request.Status != "Confirmed" && request.Status != "Cancelled")
+        var priceuser = await _context.User.FirstOrDefaultAsync(u => u.Ci == price.UserCI);
+        if (priceuser == null)
+        {
+            return BadRequest(new { error = "user not found" });
+        }
+
+        if (request.Status != "pending" && request.Status != "confirmed" && request.Status != "cancelled")
         {
             return BadRequest(new { error = "Invalid Status" });
         }
+
         price.Status = request.Status;
-        if (request.Status == "Confirmed")
+        if (request.Status == "confirmed")
         {
             string codeAccount = await GenerateAccountReceivableCode();
-            AccountReceivable accountReceivable = new AccountReceivable
+            AccountReceivable accountReceivable = new()
             {
-                UserID = request.UserID,
+                UserCI = price.UserCI,
                 Code = codeAccount,
-                AppointmentDays = request.AppointmentDays,
+                User = priceuser,
+                AppointmentDays = price.AppointmentDays,
                 ProceduresDescription = price.Procedure.Description,
-                TotalPrice = request.TotalPrice,
-                Balance = request.TotalPrice,
-                Status = "Pending",
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now
+                TotalPrice = price.TotalPrice,
+                Balance = price.TotalPrice,
+                Status = "pending",
+                CreatedAt = DateTime.Now.ToUniversalTime(),
+                UpdatedAt = DateTime.Now.ToUniversalTime()
             };
 
             await _context.AccountReceivable.AddAsync(accountReceivable);
 
-            int[] paymentPlan = new int[1];
-            paymentPlan = CalculatePaymentPlan(request.TotalPrice, request.AppointmentDays);
-            var user = await _context.User.FindAsync(request.UserID);
-            for (int i = 0; i < request.AppointmentDays; i++)
+            int[] paymentPlan = CalculatePaymentPlan(price.TotalPrice, price.AppointmentDays);
+            var user = await _context.User.FirstOrDefaultAsync(u => u.Ci == price.UserCI);
+            for (int i = 0; i < price.AppointmentDays; i++)
             {
                 AccountReceivableDetail accountReceivableDetail = new()
                 {
-                    AccountReceivableID = accountReceivable.ID,
+                    AccountReceivableCode = accountReceivable.Code,
                     AccountReceivable = accountReceivable,
                     Amount = paymentPlan[i],
-                    Status = "Pending",
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now
+                    Status = "pending",
+                    CreatedAt = DateTime.Now.ToUniversalTime(),
+                    UpdatedAt = DateTime.Now.ToUniversalTime()
                 };
                 await _context.AccountReceivableDetail.AddAsync(accountReceivableDetail);
 
                 Appointment appointment = new()
                 {
-                    UserID = request.UserID,
-                    User = user,
-                    Date = DateTime.Now,
+                    UserCI = price.UserCI,
+                    Date = DateTime.Now.ToUniversalTime().AddDays(i + 1),
                     Code = await GenerateAppointmentCode(),
                     Type = "General",
-                    UpdatedAt = DateTime.Now,
-                    CreatedAt = DateTime.Now,
-                    Status = "Pending",
+                    UpdatedAt = DateTime.Now.ToUniversalTime(),
+                    CreatedAt = DateTime.Now.ToUniversalTime(),
+                    Status = "pending",
                     Reason = price.Procedure.Description,
                 };
                 await _context.Appointment.AddAsync(appointment);
             }
         }
-        price.UpdatedAt = DateTime.Now;
+        price.UpdatedAt = DateTime.Now.ToUniversalTime();
         _context.Entry(price).State = EntityState.Modified;
         await _context.SaveChangesAsync();
         return Ok(price);

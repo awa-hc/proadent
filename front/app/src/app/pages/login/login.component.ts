@@ -68,7 +68,7 @@ export class LoginComponent implements OnInit {
           this.storageService.setItem('token', response.token);
           this.router.navigate(['/']);
         } else {
-          this._snackBar.open(response, 'Aceptar', {
+          this._snackBar.open(response.error, 'Aceptar', {
             duration: 2000,
           });
         }

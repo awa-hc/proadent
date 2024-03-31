@@ -29,7 +29,7 @@ public class AppointmentController : ControllerBase
 
             appointment.Code,
             appointment.Status,
-            date = (appointment.Date).ToString("dd/MM/yyyy HH:mm"),
+            date = appointment.Date.ToString("dd/MM/yyyy HH:mm"),
             createdAt = ConvertToTimeZone(appointment.CreatedAt, "SA Western Standard Time").ToString("dd/MM/yyyy HH:mm"),
             updatedAt = ConvertToTimeZone(appointment.UpdatedAt, "SA Western Standard Time").ToString("dd/MM/yyyy HH:mm"),
             appointment.Reason,
@@ -51,7 +51,7 @@ public class AppointmentController : ControllerBase
             return BadRequest(new { error = "Date must be in the future" });
         }
 
-        var user = await _context.User.FindAsync(request.UserID);
+        var user = await _context.User.FirstOrDefaultAsync(u => u.Ci == request.UserCI);
         if (user == null)
         {
             return BadRequest(new { error = "User not found" });
@@ -62,7 +62,7 @@ public class AppointmentController : ControllerBase
         }
         Appointment appointment = new()
         {
-            UserID = request.UserID,
+            UserCI = request.UserCI,
             User = user,
             Date = request.Date,
             Code = await GenerateAppointmentCode(),
@@ -134,7 +134,7 @@ public class AppointmentController : ControllerBase
             return BadRequest(new { error = "Date must be in the future" });
         }
 
-        var user = await _context.User.FindAsync(request.UserID);
+        var user = await _context.User.FirstOrDefaultAsync(u => u.Ci == request.UserCI);
         if (user == null)
         {
             return BadRequest(new { error = "User not found" });
@@ -237,7 +237,7 @@ public class AppointmentController : ControllerBase
 
     private async Task<ActionResult> SendEmailAppointmentStatusChanged(Appointment appointment)
     {
-        var user = await _context.User.FindAsync(appointment.UserID);
+        var user = await _context.User.FirstOrDefaultAsync(u => u.Ci == appointment.UserCI);
         if (user == null)
         {
             return BadRequest(new { error = "User not found" });
@@ -282,7 +282,7 @@ public class AppointmentController : ControllerBase
 
     private async Task<ActionResult> SendEmailAppointmentCreated(Appointment appointment)
     {
-        var user = await _context.User.FindAsync(appointment.UserID);
+        var user = await _context.User.FirstOrDefaultAsync(u => u.Ci == appointment.UserCI);
         if (user == null)
         {
             return BadRequest(new { error = "User not found" });

@@ -8,7 +8,7 @@ import { response } from 'express';
   providedIn: 'root',
 })
 export class DataService {
-  private url = 'https://backasp.fly.dev/';
+  private url = 'http://localhost:5062/';
   private urlservices = `http://localhost:8080/`;
   constructor(
     private http: HttpClient,

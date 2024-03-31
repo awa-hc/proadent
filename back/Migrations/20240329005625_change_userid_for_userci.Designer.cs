@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using back.Data;
@@ -11,9 +12,11 @@ using back.Data;
 namespace back.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240329005625_change_userid_for_userci")]
+    partial class change_userid_for_userci
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -78,10 +81,6 @@ namespace back.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
-
-                    b.Property<string>("AccountReceivableCode")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<int>("AccountReceivableID")
                         .HasColumnType("integer");
@@ -161,10 +160,6 @@ namespace back.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
 
-                    b.Property<string>("AppointmentCode")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<int>("AppointmentID")
                         .HasColumnType("integer");
 
@@ -179,10 +174,6 @@ namespace back.Migrations
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("UserCI")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<int>("UserID")
                         .HasColumnType("integer");

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace back.Controllers;
 
 [ApiController]
-[Route("AccountReceivable/[controller]")]
+[Route("[controller]")]
 
 
 public class AccountReceivableController : ControllerBase
@@ -26,10 +26,10 @@ public class AccountReceivableController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> CreateAccountReceivable([FromBody] AccountReceivable request)
+    public async Task<ActionResult> CreateAccountReceivable([FromBody] CreateAccountReceivableRequest request)
     {
 
-        var user = await _context.User.FindAsync(request.UserID);
+        var user = await _context.User.FirstOrDefaultAsync(u => u.Ci == request.UserCI);
         if (user == null)
         {
             return BadRequest(new { error = "User not found" });
@@ -48,35 +48,32 @@ public class AccountReceivableController : ControllerBase
         }
 
         request.Balance = request.TotalPrice;
-        request.Status = "Pending";
-        request.CreatedAt = DateTime.Now.ToUniversalTime();
-        request.UpdatedAt = DateTime.Now.ToUniversalTime();
-        request.Code = await GenerateAccountReceivableCode();
 
 
         AccountReceivable accountReceivable = new()
         {
-            UserID = request.UserID,
+            UserCI = request.UserCI,
             User = user,
-            Code = request.Code,
+            Code = await GenerateAccountReceivableCode(),
             AppointmentDays = request.AppointmentDays,
             ProceduresDescription = request.ProceduresDescription,
             TotalPrice = request.TotalPrice,
             Balance = request.Balance,
-            Status = request.Status,
-            CreatedAt = request.CreatedAt,
-            UpdatedAt = request.UpdatedAt
+            Status = "pending",
+            CreatedAt = DateTime.Now.ToUniversalTime(),
+            UpdatedAt = DateTime.Now.ToUniversalTime(),
         };
 
         await _context.AccountReceivable.AddAsync(accountReceivable);
         await _context.SaveChangesAsync();
-        return Ok(accountReceivable);
+        return Ok(new { message = "Account Reciavable created", accountReceivable.Code });
     }
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<AccountReceivable>> GetAccountReceivable(int id)
+
+    [HttpGet("{code}")]
+    public async Task<ActionResult<AccountReceivable>> GetAccountReceivable(string code)
     {
-        var AccountReceivable = await _context.AccountReceivable.FindAsync(id);
+        var AccountReceivable = await _context.AccountReceivable.FirstOrDefaultAsync(a => a.Code == code);
 
         if (AccountReceivable == null)
         {
@@ -99,7 +96,7 @@ public class AccountReceivableController : ControllerBase
         {
             return BadRequest(new { error = "AccountReceivable not found" });
         }
-        var user = await _context.User.FindAsync(request.UserID);
+        var user = await _context.User.FirstOrDefaultAsync(u => u.Ci == request.UserCI);
         if (user == null)
         {
             return BadRequest(new { error = "User not found" });

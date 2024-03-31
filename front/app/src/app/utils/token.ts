@@ -20,6 +20,18 @@ export default function GetUserIdFromToken(token: string): number | null {
   }
   return null;
 }
+export function GetCIfromToken(token: string): string | null {
+  const payload = getTokenPayload(token);
+
+  if (payload) {
+    const userCI =
+      payload[
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/authentication'
+      ];
+    return userCI;
+  }
+  return null;
+}
 
 export function GetRoleFromToken(token: string): string | null {
   const payload = getTokenPayload(token);

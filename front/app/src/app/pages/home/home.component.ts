@@ -24,7 +24,10 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { MatSelectModule } from '@angular/material/select';
 import { DataService } from '../../data.service';
-import GetUserIdFromToken, { GetRoleFromToken } from '../../utils/token';
+import GetUserIdFromToken, {
+  GetCIfromToken,
+  GetRoleFromToken,
+} from '../../utils/token';
 import { StorageService } from '../../storage.service';
 import { Router } from '@angular/router';
 import { fadeInOutAnimation } from '../../components/Animations/animations';
@@ -168,11 +171,13 @@ export class HomeComponent implements OnInit {
     // console.log(GetUserIdFromToken(this.storageService.getItem('token') || ''));
 
     const data = {
-      userId: GetUserIdFromToken(this.storageService.getItem('token') || ''),
+      userCI: GetCIfromToken(this.storageService.getItem('token') || ''),
       date: dateTime.toISOString(),
       reason: this.thirdFormGroup.value.thirdCtrl,
     };
     this.dataService.createappointment(data).subscribe((response) => {
+      console.log('enviado');
+      console.log(response);
       if (response.message == 'Appointment Created') {
         this.formSuccessfully = true;
         this.isLoadingDate = false;

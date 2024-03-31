@@ -1,12 +1,13 @@
 using back.Data;
 using back.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR.Protocol;
 using Microsoft.EntityFrameworkCore;
 
 namespace back.Controllers;
 
 [ApiController]
-[Route("Clinic/[controller]")]
+[Route("[controller]")]
 public class ClinicController : ControllerBase
 {
 
@@ -21,20 +22,35 @@ public class ClinicController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Clinic>>> GetClinics()
     {
-        return await _context.Clinic.ToListAsync();
+        var clinics = await _context.Clinic.Include(u => u.Price).Include(p => p.Procedure).ToListAsync();
+        var clinicsresponse = clinics.Select(clinic => new
+        {
+            clinic.UserCI,
+            clinic.AppointmentCode,
+            clinic.Procedure.Name,
+            clinic.Procedure.Description,
+            clinic.Procedure.SuggestedPrice,
+            clinic.Price.AppointmentDays,
+            clinic.Price.TotalPrice,
+            clinic.Price.Status,
+            clinic.CreatedAt,
+            clinic.UpdatedAt
+        });
+        return Ok(clinicsresponse);
+
     }
 
     [HttpPost]
-    public async Task<ActionResult> CreateClinic([FromBody] Clinic request)
+    public async Task<ActionResult> CreateClinic([FromBody] CreateClinic request)
     {
 
-        var user = await _context.User.FindAsync(request.UserID);
+        var user = await _context.User.FirstOrDefaultAsync(u => u.Ci == request.UserCI);
         if (user == null)
         {
             return BadRequest(new { error = "User not found" });
         }
 
-        var appointment = await _context.Appointment.FindAsync(request.AppointmentID);
+        var appointment = await _context.Appointment.FirstOrDefaultAsync(u => u.Code == request.AppointmentCode);
         if (appointment == null)
         {
             return BadRequest(new { error = "Appointment not found" });
@@ -52,29 +68,29 @@ public class ClinicController : ControllerBase
             return BadRequest(new { error = "Price not found" });
         }
 
-        request.CreatedAt = DateTime.Now.ToUniversalTime();
-        request.UpdatedAt = DateTime.Now.ToUniversalTime();
+        var CreatedAt = DateTime.Now.ToUniversalTime();
+        var UpdatedAt = DateTime.Now.ToUniversalTime();
         //request.Code = await GenerateClinicCode(request);
 
 
         Clinic clinic = new()
         {
-            UserID = request.UserID,
+            UserCI = request.UserCI,
             User = user,
-            AppointmentID = request.AppointmentID,
+            AppointmentCode = request.AppointmentCode,
             Appointment = appointment,
             ProcedureID = request.ProcedureID,
             Procedure = procedure,
             PriceID = request.PriceID,
             Price = price,
             //Code = request.Code,
-            CreatedAt = request.CreatedAt,
-            UpdatedAt = request.UpdatedAt
+            CreatedAt = CreatedAt,
+            UpdatedAt = UpdatedAt
         };
 
         await _context.Clinic.AddAsync(clinic);
         await _context.SaveChangesAsync();
-        return Ok(clinic);
+        return Ok(new { message = "clinic created" });
     }
 
     [HttpGet("{id}")]
@@ -104,13 +120,13 @@ public class ClinicController : ControllerBase
             return NotFound(new { error = "Clinic not found" });
         }
 
-        var user = await _context.User.FindAsync(request.UserID);
+        var user = await _context.User.FirstOrDefaultAsync(u => u.Ci == request.UserCI);
         if (user == null)
         {
             return BadRequest(new { error = "User not found" });
         }
 
-        var appointment = await _context.Appointment.FindAsync(request.AppointmentID);
+        var appointment = await _context.Appointment.FirstOrDefaultAsync(u => u.Code == request.AppointmentCode);
         if (appointment == null)
         {
             return BadRequest(new { error = "Appointment not found" });
