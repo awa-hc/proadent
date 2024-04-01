@@ -20,6 +20,5 @@ public class AccountReceivable
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
-    // Relación Uno a Muchos: Un AccountReceivable puede tener muchos Details
     public ICollection<AccountReceivableDetail> Details { get; set; }
 }

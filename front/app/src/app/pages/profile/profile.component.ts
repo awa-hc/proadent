@@ -36,7 +36,7 @@ export class ProfileComponent implements OnInit {
     }
     this.dataService.getuserinfo().subscribe((response) => {
       console.log(response);
-      console.log(response.appointments);
+      console.log(response.ci);
       this.email = response.email;
       this.fullname = response.fullName;
       this.ci = response.ci;

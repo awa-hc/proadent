@@ -139,6 +139,9 @@ namespace back.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int?>("UserAppointmentsID")
+                        .HasColumnType("integer");
+
                     b.Property<string>("UserCI")
                         .IsRequired()
                         .HasColumnType("text");
@@ -147,6 +150,8 @@ namespace back.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("UserAppointmentsID");
 
                     b.HasIndex("UserID");
 
@@ -335,10 +340,36 @@ namespace back.Migrations
                     b.ToTable("User");
                 });
 
+            modelBuilder.Entity("back.Models.UserAppointments", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
+
+                    b.Property<string[]>("AppointmentCode")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
+                    b.Property<string>("UserCI")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("UserID")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("UserAppointments");
+                });
+
             modelBuilder.Entity("back.Models.AccountReceivable", b =>
                 {
                     b.HasOne("back.Models.User", "User")
-                        .WithMany("AccountReceivables")
+                        .WithMany()
                         .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -359,8 +390,12 @@ namespace back.Migrations
 
             modelBuilder.Entity("back.Models.Appointment", b =>
                 {
+                    b.HasOne("back.Models.UserAppointments", null)
+                        .WithMany("Appointment")
+                        .HasForeignKey("UserAppointmentsID");
+
                     b.HasOne("back.Models.User", "User")
-                        .WithMany("Appointments")
+                        .WithMany()
                         .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -389,7 +424,7 @@ namespace back.Migrations
                         .IsRequired();
 
                     b.HasOne("back.Models.User", "User")
-                        .WithMany("Clinics")
+                        .WithMany()
                         .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -412,7 +447,7 @@ namespace back.Migrations
                         .IsRequired();
 
                     b.HasOne("back.Models.User", "User")
-                        .WithMany("Prices")
+                        .WithMany()
                         .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -433,6 +468,17 @@ namespace back.Migrations
                     b.Navigation("Role");
                 });
 
+            modelBuilder.Entity("back.Models.UserAppointments", b =>
+                {
+                    b.HasOne("back.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("back.Models.AccountReceivable", b =>
                 {
                     b.Navigation("Details");
@@ -443,15 +489,9 @@ namespace back.Migrations
                     b.Navigation("Users");
                 });
 
-            modelBuilder.Entity("back.Models.User", b =>
+            modelBuilder.Entity("back.Models.UserAppointments", b =>
                 {
-                    b.Navigation("AccountReceivables");
-
-                    b.Navigation("Appointments");
-
-                    b.Navigation("Clinics");
-
-                    b.Navigation("Prices");
+                    b.Navigation("Appointment");
                 });
 #pragma warning restore 612, 618
         }

@@ -212,46 +212,51 @@ public class UserController : ControllerBase
     [Authorize]
     public async Task<ActionResult<User>> Me()
     {
+        var claim = User.FindFirst(ClaimTypes.Authentication);
+        var UserCi = claim != null ? claim.Value.ToString() : null;
 
-        var id = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-        if (id == 0)
+        if (UserCi == null)
         {
-            return BadRequest(new { error = "Invalid ID" });
+            return BadRequest(new { error = "user ci is not valid" });
         }
+        var appointments = await _context.Appointment
+                 .Where(a => a.UserCI == UserCi)
+                 .Select(a => new
+                 {
+                     Date = a.Date.ToString("dd/MM/yyyy HH:mm"),
+                     a.Status,
+                     a.Reason,
+                     CreatedAt = ConvertToTimeZone(a.CreatedAt, "SA Western Standard Time").ToString("dd/MM/yyyy HH:mm"),
+                     UpdatedAt = ConvertToTimeZone(a.UpdatedAt, "SA Western Standard Time").ToString("dd/MM/yyyy HH:mm "),
+                     a.Code,
+                 })
+                 .ToListAsync();
+        var user = await _context.User.Include(u => u.Role).Where(u => u.Ci == UserCi).Select(u => new
+        {
+            u.Ci,
+            u.Email,
+            u.FullName,
+            u.Phone,
+            CreatedAt = ConvertToTimeZone(u.CreatedAt, "SA Western Standard Time").ToString("dd/MM/yyyy HH:mm"),
+            UpdateAt = ConvertToTimeZone(u.UpdatedAt, "SA Western Standard Time").ToString("dd/MM/yyyy HH:mm"),
+            u.BirthDay,
+            role = new
+            {
+                u.Role.Name,
+                u.Role.Description
+            },
+            appointments
 
-        var user = await _context.User.Include(r => r.Appointments).Include(r => r.Role).FirstOrDefaultAsync(u => u.ID == id);
+        }).FirstOrDefaultAsync();
+
 
         if (user == null)
         {
             return NotFound(new { error = "User not found" });
         }
 
+        return Ok(user);
 
-        var userresponse = new
-        {
-            user.FullName,
-            user.Email,
-            user.Phone,
-            user.Ci,
-            BirthDay = user.BirthDay.ToString("dd/MM/yyyy"), // Formato de fecha de nacimiento
-            CreatedAt = ConvertToTimeZone(user.CreatedAt, "SA Western Standard Time").ToString("dd/MM/yyyy HH:mm:ss"),
-            UpdatedAt = ConvertToTimeZone(user.UpdatedAt, "SA Western Standard Time").ToString("dd/MM/yyyy HH:mm:ss"),
-            Role = new
-            {
-                user.Role.Name,
-                user.Role.Description
-            },
-            Appointments = user.Appointments.Select(a => new
-            {
-                Date = ConvertToTimeZone(a.Date, "SA Western Standard Time").ToString("dd/MM/yyyy HH:mm"),
-                a.Reason,
-                CreatedAt = ConvertToTimeZone(a.CreatedAt, "SA Western Standard Time").ToString("dd/MM/yyyy HH:mm"),
-                UpdatedAt = ConvertToTimeZone(a.UpdatedAt, "SA Western Standard Time").ToString("dd/MM/yyyy HH:mm"),
-                a.Status
-            }).ToList()
-        };
-
-        return Ok(userresponse);
     }
 
 
@@ -302,7 +307,7 @@ public class UserController : ControllerBase
     }
 
 
-    private DateTime ConvertToTimeZone(DateTime dateTime, string timeZoneId)
+    private static DateTime ConvertToTimeZone(DateTime dateTime, string timeZoneId)
     {
         var timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
         return TimeZoneInfo.ConvertTimeFromUtc(dateTime, timeZoneInfo);

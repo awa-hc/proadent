@@ -64,10 +64,10 @@
       @for(appointment of data; track appointment){
       <div
         (click)="changelocation(appointment.code)"
-        class="p-2 text-sm flex justify-evenly border-y border-white hover:bg-slate-500"
+        class="p-2 text-sm flex justify-evenly border-y border-black dark:border-white hover:bg-slate-500"
       >
         <section
-          class="text-center flex items-center px-1 border-r border-dashed border-white text-nowrap"
+          class="text-center flex items-center px-1 border-r border-dashed border-black dark:border-white text-nowrap"
         >
           {{ appointment.code }}
         </section>
@@ -76,10 +76,11 @@
           <span>{{ appointment.updatedAt }}</span>
           <span class="underline text-[10px]">fecha de la cita</span>
           <span>{{ appointment.date }}</span>
+          <span class="underline text-[10px]">Razon</span>
           <span class="text-wrap">{{ appointment.reason }}</span>
         </div>
         <div
-          class="flex-grow basis-0 flex flex-col border-l pl-2 border-dashed border-white"
+          class="flex-grow basis-0 flex justify-center flex-col border-l pl-2 border-dashed border-black dark:border-white"
         >
           <span class="underline">Usuario</span>
           <span>{{ appointment.userName }}</span>

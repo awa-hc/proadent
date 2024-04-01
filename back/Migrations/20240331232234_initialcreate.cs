@@ -19,7 +19,8 @@ namespace back.Migrations
                     ID = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false)
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    SuggestedPrice = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -53,7 +54,7 @@ namespace back.Migrations
                     Password = table.Column<string>(type: "text", nullable: false),
                     Phone = table.Column<string>(type: "text", nullable: false),
                     Ci = table.Column<string>(type: "text", nullable: false),
-                    BirthDay = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    BirthDay = table.Column<DateOnly>(type: "date", nullable: false),
                     RoleID = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -73,11 +74,16 @@ namespace back.Migrations
                 {
                     ID = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserCI = table.Column<string>(type: "text", nullable: false),
                     UserID = table.Column<int>(type: "integer", nullable: false),
+                    Code = table.Column<string>(type: "text", nullable: false),
                     AppointmentDays = table.Column<int>(type: "integer", nullable: false),
                     ProceduresDescription = table.Column<string>(type: "text", nullable: false),
                     TotalPrice = table.Column<decimal>(type: "numeric", nullable: false),
-                    Balance = table.Column<decimal>(type: "numeric", nullable: false)
+                    Balance = table.Column<decimal>(type: "numeric", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -91,37 +97,19 @@ namespace back.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Appointment",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserID = table.Column<int>(type: "integer", nullable: false),
-                    Type = table.Column<string>(type: "text", nullable: false),
-                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Reason = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Appointment", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_Appointment_User_UserID",
-                        column: x => x.UserID,
-                        principalTable: "User",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Price",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserCI = table.Column<string>(type: "text", nullable: false),
                     UserID = table.Column<int>(type: "integer", nullable: false),
                     ProcedureID = table.Column<int>(type: "integer", nullable: false),
                     AppointmentDays = table.Column<int>(type: "integer", nullable: false),
-                    TotalPrice = table.Column<decimal>(type: "numeric", nullable: false)
+                    TotalPrice = table.Column<decimal>(type: "numeric", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -141,21 +129,79 @@ namespace back.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AccountReceivableDetails",
+                name: "UserAppointments",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    AccountReceivableID = table.Column<int>(type: "integer", nullable: false),
-                    Amount = table.Column<double>(type: "double precision", nullable: false)
+                    UserCI = table.Column<string>(type: "text", nullable: false),
+                    UserID = table.Column<int>(type: "integer", nullable: false),
+                    AppointmentCode = table.Column<string[]>(type: "text[]", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AccountReceivableDetails", x => x.ID);
+                    table.PrimaryKey("PK_UserAppointments", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_AccountReceivableDetails_AccountReceivable_AccountReceivabl~",
+                        name: "FK_UserAppointments_User_UserID",
+                        column: x => x.UserID,
+                        principalTable: "User",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AccountReceivableDetail",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    AccountReceivableCode = table.Column<string>(type: "text", nullable: false),
+                    AccountReceivableID = table.Column<int>(type: "integer", nullable: false),
+                    Amount = table.Column<double>(type: "double precision", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AccountReceivableDetail", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_AccountReceivableDetail_AccountReceivable_AccountReceivable~",
                         column: x => x.AccountReceivableID,
                         principalTable: "AccountReceivable",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Appointment",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserCI = table.Column<string>(type: "text", nullable: false),
+                    UserID = table.Column<int>(type: "integer", nullable: false),
+                    Code = table.Column<string>(type: "text", nullable: false),
+                    Type = table.Column<string>(type: "text", nullable: false),
+                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Reason = table.Column<string>(type: "text", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UserAppointmentsID = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Appointment", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Appointment_UserAppointments_UserAppointmentsID",
+                        column: x => x.UserAppointmentsID,
+                        principalTable: "UserAppointments",
+                        principalColumn: "ID");
+                    table.ForeignKey(
+                        name: "FK_Appointment_User_UserID",
+                        column: x => x.UserID,
+                        principalTable: "User",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -166,10 +212,14 @@ namespace back.Migrations
                 {
                     ID = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserCI = table.Column<string>(type: "text", nullable: false),
                     UserID = table.Column<int>(type: "integer", nullable: false),
+                    AppointmentCode = table.Column<string>(type: "text", nullable: false),
                     AppointmentID = table.Column<int>(type: "integer", nullable: false),
                     ProcedureID = table.Column<int>(type: "integer", nullable: false),
-                    PriceID = table.Column<int>(type: "integer", nullable: false)
+                    PriceID = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -206,9 +256,14 @@ namespace back.Migrations
                 column: "UserID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AccountReceivableDetails_AccountReceivableID",
-                table: "AccountReceivableDetails",
+                name: "IX_AccountReceivableDetail_AccountReceivableID",
+                table: "AccountReceivableDetail",
                 column: "AccountReceivableID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Appointment_UserAppointmentsID",
+                table: "Appointment",
+                column: "UserAppointmentsID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Appointment_UserID",
@@ -249,13 +304,18 @@ namespace back.Migrations
                 name: "IX_User_RoleID",
                 table: "User",
                 column: "RoleID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserAppointments_UserID",
+                table: "UserAppointments",
+                column: "UserID");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AccountReceivableDetails");
+                name: "AccountReceivableDetail");
 
             migrationBuilder.DropTable(
                 name: "Clinic");
@@ -268,6 +328,9 @@ namespace back.Migrations
 
             migrationBuilder.DropTable(
                 name: "Price");
+
+            migrationBuilder.DropTable(
+                name: "UserAppointments");
 
             migrationBuilder.DropTable(
                 name: "Procedure");
