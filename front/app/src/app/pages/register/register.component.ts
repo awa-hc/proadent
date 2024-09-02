@@ -106,23 +106,14 @@ export class RegisterComponent implements OnInit {
         .subscribe((response) => {
           if (response) {
             console.log(response);
-            if (response.error) {
-              this._snackBar.open(response.error, 'Aceptar', {
-                duration: 10000,
-                horizontalPosition: 'center',
-                verticalPosition: 'top',
-                panelClass: ['error-snackbar', 'snackbar-center'],
-              });
-            }
-
-            // this._snackBar.open(
-            //   'Revisa tu email para verificarlo!',
-            //   'Aceptar',
-            //   {
+            // if (response.error) {
+            //   this._snackBar.open(response.error, 'Aceptar', {
             //     duration: 10000,
+            //     horizontalPosition: 'center',
             //     verticalPosition: 'top',
-            //   }
-            // );
+            //     panelClass: ['error-snackbar', 'snackbar-center'],
+            //   });
+            // }
           }
         });
     }
