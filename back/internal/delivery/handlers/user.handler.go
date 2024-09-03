@@ -35,6 +35,19 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 	c.JSON(200, User)
 
 }
+
+func (h *UserHandler) GetAll(c *gin.Context) {
+
+	Users, err := h.UserService.GetAll(c)
+	if err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(200, Users)
+
+}
+
 func (h *UserHandler) GetByCI(c *gin.Context) {
 	ci := c.Param("ci")
 

@@ -1,6 +1,7 @@
 package services
 
 import (
+	"back/internal/domain/dto"
 	"back/internal/domain/entities"
 	"back/internal/repository/user"
 	"context"
@@ -24,15 +25,19 @@ func (us *UserService) CreateUser(ctx context.Context, user *entities.User) erro
 	return us.UserRepository.CreateUser(ctx, user)
 }
 
-func (us *UserService) GetByCI(ctx context.Context, ci string) (*entities.User, error) {
+func (us *UserService) GetAll(ctx context.Context) ([]entities.User, error) {
+	return us.UserRepository.GetAll(ctx)
+}
+
+func (us *UserService) GetByCI(ctx context.Context, ci string) (*dto.UserDTO, error) {
 	return us.UserRepository.GetByCI(ctx, ci)
 }
 
-func (us *UserService) GetByEmail(ctx context.Context, email string) (*entities.User, error) {
+func (us *UserService) GetByEmail(ctx context.Context, email string) (*dto.UserDTO, error) {
 	return us.UserRepository.GetByEmail(ctx, email)
 }
 
-func (us *UserService) GetByUsername(ctx context.Context, username string) (*entities.User, error) {
+func (us *UserService) GetByUsername(ctx context.Context, username string) (*dto.UserDTO, error) {
 	return us.UserRepository.GetByUsername(ctx, username)
 }
 

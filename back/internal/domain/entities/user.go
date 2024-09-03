@@ -10,12 +10,13 @@ import (
 // User represents a user entity
 type User struct {
 	gorm.Model
-	Username  string `json:"username" gorm:"unique;not null"`
-	Birthdate string `json:"birthdate"`
-	Password  string `json:"password" gorm:"not null"`
-	Email     string `json:"email" gorm:"unique;not null"`
-	Role      string `json:"role" gorm:"not null"`
-	Ci        string `json:"ci" gorm:"unique;not null"`
+	Username     string        `json:"username" gorm:"unique;not null"`
+	Birthdate    string        `json:"birthdate"`
+	Password     string        `json:"password" gorm:"not null"`
+	Email        string        `json:"email" gorm:"unique;not null"`
+	Role         string        `json:"role" gorm:"not null"`
+	CI           string        `json:"ci" gorm:"uniqueIndex;not null"`
+	Appointments []Appointment `gorm:"foreignKey:PatientCI;references:CI"`
 }
 
 // BeforeCreate is a function to asign a role to a user before creating it
@@ -51,6 +52,9 @@ func (u *User) ValidateAtCreate() error {
 		return err
 	}
 	if err := u.ValidateCI(); err != nil {
+		return err
+	}
+	if err := u.ValidateBithdate(); err != nil {
 		return err
 	}
 
@@ -102,12 +106,18 @@ func (u *User) ValidateEmail() error {
 
 // ValidateCI is a function to validate the CI of a user
 func (u *User) ValidateCI() error {
-	if u.Ci == "" {
+	if u.CI == "" {
 		return &utils.ValidationError{Field: "ci", Message: "CI is required"}
 	}
-	if len(u.Ci) < 6 {
+	if len(u.CI) < 6 {
 		return &utils.ValidationError{Field: "ci", Message: "CI must have 6 digits"}
 	}
 
+	return nil
+}
+func (u *User) ValidateBithdate() error {
+	if u.Birthdate == "" {
+		return &utils.ValidationError{Field: "birthdate", Message: "Birthdate is required"}
+	}
 	return nil
 }

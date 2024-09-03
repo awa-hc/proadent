@@ -2,26 +2,26 @@ package entities
 
 import (
 	"back/internal/utils"
+	"time"
 
 	"gorm.io/gorm"
 )
 
 type Appointment struct {
 	gorm.Model
-	DoctorCI    uint   `json:"doctor_ci" gorm:"not null"`
-	PatientCI   uint   `json:"patient_ci" gorm:"not null"`
-	DateTime    string `json:"date_time" gorm:"not null"`
-	Reason      string `json:"reason" gorm:"not null"`
-	Status      string `json:"status" gorm:"not null"`
-	RequestedAt string `json:"requested_at" gorm:"not null"`
-	RequestedBy string `json:"requested_by" gorm:"not null"`
-	Type        string `json:"type" gorm:"not null"`
-	Code        string `json:"code" gorm:"unique;not null"`
+	DoctorCI         string             `json:"doctor_ci" gorm:"not null"`
+	PatientCI        string             `json:"patient_ci" gorm:"not null"`
+	DateTime         *time.Time         `json:"date_time" gorm:"not null"`
+	Reason           string             `json:"reason" gorm:"not null"`
+	Status           string             `json:"status" gorm:"not null"`
+	RequestedBy      string             `json:"requested_by" gorm:"not null"`
+	Type             string             `json:"type" gorm:"not null"`
+	Code             string             `json:"code" gorm:"uniqueIndex;not null"`
+	UserAppointments []UserAppointments `gorm:"foreignKey:AppointmentCode;references:Code"`
 }
 
 func (a *Appointment) BeforeCreate(tx *gorm.DB) (err error) {
 	a.Status = "pending"
-
 	return
 }
 
@@ -59,10 +59,6 @@ func (a *Appointment) ValidateAtCreate() error {
 		return err
 	}
 
-	if err := a.ValidateRequestedAt(); err != nil {
-		return err
-	}
-
 	if err := a.ValidateRequestedBy(); err != nil {
 		return err
 	}
@@ -76,10 +72,10 @@ func (a *Appointment) ValidateAtCreate() error {
 }
 
 func (a *Appointment) ValidateDateTime() error {
-	if a.DateTime == "" {
+	if a.DateTime.String() == "" {
 		return &utils.ValidationError{Field: "date_time", Message: "date_time is required"}
 	}
-	if a.DateTime < "2024-01-01" {
+	if a.DateTime.String() < "2024-01-01" {
 		return &utils.ValidationError{Field: "date_time", Message: "date_time is invalid"}
 	}
 
@@ -91,19 +87,6 @@ func (a *Appointment) ValidateReason() error {
 	}
 	if len(a.Reason) < 10 {
 		return &utils.ValidationError{Field: "reason", Message: "reason is too short"}
-	}
-	return nil
-}
-func (a *Appointment) ValidateRequestedAt() error {
-	if a.RequestedAt == "" {
-		return &utils.ValidationError{Field: "requested_at", Message: "requested_at is required"}
-	}
-	if a.RequestedAt < "2024-01-01" {
-		return &utils.ValidationError{Field: "requested_at", Message: "requested_at is invalid"}
-	}
-
-	if a.RequestedAt > a.DateTime {
-		return &utils.ValidationError{Field: "requested_at", Message: "requested_at is invalid"}
 	}
 	return nil
 }

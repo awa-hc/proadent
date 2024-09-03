@@ -18,6 +18,7 @@ func SetupUserRouter(router *gin.Engine, db *gorm.DB) {
 	UserGroup := router.Group("/user")
 	{
 		UserGroup.POST("/create", userHandlers.CreateUser)
+		UserGroup.GET("/all", userHandlers.GetAll)
 		UserGroup.GET("/ci/:ci", userHandlers.GetByCI)
 		UserGroup.GET("/email/:email", userHandlers.GetByEmail)
 	}

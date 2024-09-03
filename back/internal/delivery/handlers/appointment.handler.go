@@ -9,10 +9,10 @@ import (
 )
 
 type AppointmentHandler struct {
-	AppointmentHandler services.AppointmetService
+	AppointmentHandler services.AppointmentService
 }
 
-func NewAppointmentHandler(appointmentService services.AppointmetService) *AppointmentHandler {
+func NewAppointmentHandler(appointmentService services.AppointmentService) *AppointmentHandler {
 	return &AppointmentHandler{
 		AppointmentHandler: appointmentService,
 	}

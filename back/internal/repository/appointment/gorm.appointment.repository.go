@@ -100,9 +100,6 @@ func (g *gormAppointmentRepository) GetByCode(ctx context.Context, code string) 
 // GetByDoctorCI implements AppointmentRepository.
 func (g *gormAppointmentRepository) GetByDoctorCI(ctx context.Context, doctorCI string) ([]entities.Appointment, error) {
 
-	if err := g.db.First(&entities.Appointment{}, doctorCI).Error; err != nil {
-		return nil, err
-	}
 	var appointments []entities.Appointment
 	if err := g.db.Where("doctor_ci = ?", doctorCI).Find(&appointments).Error; err != nil {
 		return nil, err
@@ -135,6 +132,14 @@ func (g *gormAppointmentRepository) GetByPatientCI(ctx context.Context, patientC
 	}
 	return appointments, nil
 
+}
+
+func (g *gormAppointmentRepository) GetLast(ctx context.Context) (*entities.Appointment, error) {
+	var appointment entities.Appointment
+	if err := g.db.Order("id DESC").First(&appointment).Error; err != nil {
+		return nil, err
+	}
+	return &appointment, nil
 }
 
 // Reject implements AppointmentRepository.
@@ -222,4 +227,10 @@ func (g *gormAppointmentRepository) GenerateCode() (string, error) {
 		return "", err
 	}
 	return newCode, nil
+}
+
+func (r *gormAppointmentRepository) WithTransaction(ctx context.Context, fn func(ctx context.Context) error) error {
+	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		return fn(ctx)
+	})
 }
