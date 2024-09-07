@@ -58,25 +58,25 @@ export class ProfileClinicsComponent implements AfterViewInit {
       console.error('No se ha encontrado el CI del paciente');
       this.router.navigate(['/profile/me']);
       return;
-    }
+    } else {
+      this.http
+        .get<Clinics[]>(
+          'http://localhost:8080/clinic/patient/' + this.storage.getItem('ci'),
+          { withCredentials: true }
+        )
+        .subscribe((data: Clinics[]) => {
+          const formattedData = data.map((clinic) => {
+            return {
+              ...clinic,
+              date_time: formatUtcToLocal(clinic.date_time, 'yyyy-MM-dd HH:mm'), // Asigna la fecha formateada
+            };
+          });
 
-    this.http
-      .get<Clinics[]>(
-        'http://localhost:8080/clinic/patient/' + this.storage.getItem('ci'),
-        { withCredentials: true }
-      )
-      .subscribe((data: Clinics[]) => {
-        const formattedData = data.map((clinic) => {
-          return {
-            ...clinic,
-            date_time: formatUtcToLocal(clinic.date_time, 'yyyy-MM-dd HH:mm'), // Asigna la fecha formateada
-          };
+          this.dataSource = new MatTableDataSource(formattedData);
+          this.dataSource.paginator = this.paginator;
+          console.log('Formatted Data:', formattedData); // Verifica todo el objeto
         });
-
-        this.dataSource = new MatTableDataSource(formattedData);
-        this.dataSource.paginator = this.paginator;
-        console.log('Formatted Data:', formattedData); // Verifica todo el objeto
-      });
+    }
   }
 
   code: string | null = null;
