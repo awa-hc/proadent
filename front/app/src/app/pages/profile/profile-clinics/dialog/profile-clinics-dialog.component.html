@@ -1,0 +1,17 @@
+<h2 mat-dialog-title mat-dialo>Registro de tu clinica</h2>
+<mat-dialog-content class="mat-typography">
+  <h3>Codigo {{ data.code }}</h3>
+  <h3>Fecha {{ data.date_time }}</h3>
+  <h3>Razon:</h3>
+  <p>{{ data.reason }}</p>
+  <h3>Ci:</h3>
+  <p>{{ data.patient_ci }}</p>
+  <h3>Estado:</h3>
+  <p>{{ data.status }}</p>
+  <h3>Total:</h3>
+  <p>{{ data.price }}</p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-button [mat-dialog-close]="true" cdkFocusInitial>Install</button>
+</mat-dialog-actions>

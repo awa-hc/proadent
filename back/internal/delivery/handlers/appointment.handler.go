@@ -85,6 +85,17 @@ func (h *AppointmentHandler) GetByPatientCI(c *gin.Context) {
 
 	c.JSON(200, appointments)
 }
+
+func (h *AppointmentHandler) GetAll(c *gin.Context) {
+	appointments, err := h.AppointmentHandler.GetAll(c)
+	if err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(200, appointments)
+}
+
 func (h *AppointmentHandler) Confirm(c *gin.Context) {
 	code := c.Param("code")
 

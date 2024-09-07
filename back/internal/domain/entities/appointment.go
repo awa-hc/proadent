@@ -18,6 +18,7 @@ type Appointment struct {
 	Type             string             `json:"type" gorm:"not null"`
 	Code             string             `json:"code" gorm:"uniqueIndex;not null"`
 	UserAppointments []UserAppointments `gorm:"foreignKey:AppointmentCode;references:Code"`
+	ClinicVisit      Clinic             `gorm:"foreignKey:AppointmentCode;references:Code"`
 }
 
 func (a *Appointment) BeforeCreate(tx *gorm.DB) (err error) {

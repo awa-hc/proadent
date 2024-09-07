@@ -58,5 +58,6 @@ func (r *gormAuthRepository) LoginWithEmail(ctx context.Context, email string, p
 
 func (r *gormAuthRepository) GetUserByContext(context.Context) (*entities.User, error) {
 	var User entities.User
+
 	return &User, nil
 }

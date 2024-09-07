@@ -3,6 +3,7 @@ package router
 import (
 	"back/internal/delivery/handlers"
 	"back/internal/domain/services"
+	"back/internal/middleware"
 	"back/internal/repository/user"
 
 	"github.com/gin-gonic/gin"
@@ -21,5 +22,9 @@ func SetupUserRouter(router *gin.Engine, db *gorm.DB) {
 		UserGroup.GET("/all", userHandlers.GetAll)
 		UserGroup.GET("/ci/:ci", userHandlers.GetByCI)
 		UserGroup.GET("/email/:email", userHandlers.GetByEmail)
+		UserGroup.GET("/me", middleware.RequireAuth(db), userHandlers.Me)
+		// UserGroup.GET("/username/:username", userHandlers.GetByUsername)
+		// UserGroup.PUT("/update", userHandlers.UpdateUser)
+		// UserGroup.DELETE("/delete/:id", userHandlers.DeleteUser)
 	}
 }

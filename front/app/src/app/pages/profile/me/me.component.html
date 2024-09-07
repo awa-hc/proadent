@@ -1,0 +1,181 @@
+<div class="p-5 ml-5">
+  <div class="flex space-x-10">
+    <div class="w-max">
+      <img
+        src="https://avatars.githubusercontent.com/u/56120605?v=4"
+        alt="profile"
+        class="w-20 h-20 rounded-full"
+      />
+    </div>
+    <div class="flex flex-col">
+      <h2 class="text-3xl font-bold">
+        <span class="text-3xl font-semibold">Bienvenido de nuevo</span>
+      </h2>
+      <ul class="space-y-2">
+        <li>
+          <strong>Nombre:</strong> {{ profile.username || "Cargando..." }}
+        </li>
+        <li><strong>Email:</strong> {{ profile.email || "Cargando..." }}</li>
+        <li><strong>C.I.:</strong> {{ profile.ci || "Cargando..." }}</li>
+        <li>
+          <strong>Fecha de Nacimiento:</strong>
+          {{ profile.birthdate || "Cargando..." }}
+        </li>
+        <li><strong>Role:</strong> {{ profile.role || "Cargando..." }}</li>
+        <li>
+          <strong>Citas totales:</strong>
+          {{ profile.appointments || "No appointments" }}
+        </li>
+      </ul>
+      @if (!profile){
+      <ng-container>
+        <p>cargando...</p>
+      </ng-container>
+      }
+
+      <section>
+        <button
+          class="bg-primary text-white px-4 py-2 rounded-lg mt-4 hover:bg-primary/80 transition-colors duration-300 ease-in-out"
+        >
+          Editar Perfil
+        </button>
+      </section>
+    </div>
+  </div>
+</div>
+
+<!-- LAST APPOINTMENT -->
+<div class="p-5 ml-5 grid grid-cols-1 md:grid-cols-2 items-center">
+  <div class="">
+    <span class="text-3xl font-semibold">Ultima cita</span>
+    <div
+      class="grid w-max grid-cols-2 rounded-3xl shadow-lg items-center border border-gray-200 mt-4"
+    >
+      <div class="flex flex-col space-y-4 p-4">
+        <span class="font-bold text-wrap">Doctor Name</span>
+        <span class="text-wrap">scheduled: oct15, 2024, 10pm</span>
+        <span class="text-wrap">estado: confirmado</span>
+        <button
+          class="bg-primary text-white px-4 py-2 rounded-2xl mt-4 hover:bg-primary/80 transition-colors duration-300 ease-in-out"
+        >
+          Ver Detalles
+        </button>
+      </div>
+      <img
+        src="https://th.bing.com/th/id/R.215c1ff399e961851cc11a7810886a0e?rik=oZfxvnavGwz6cA&riu=http%3a%2f%2fwww.writergirl.com%2fwp-content%2fuploads%2f2014%2f11%2fDoctor-790X1024.jpg&ehk=CmnYm47Si7SLogCKQcVQ9Onueou53ycpcjvFFc3Ej00%3d&risl=&pid=ImgRaw&r=0"
+        alt="doctor"
+        class="w-40 h-40 rounded-lg"
+      />
+    </div>
+  </div>
+  <div class="ld:mt-0 mt-5">
+    <span class="text-3xl font-semibold">Ultima intervencion</span>
+    <div
+      class="grid w-max grid-cols-2 rounded-3xl shadow-lg items-center border border-gray-200 mt-4"
+    >
+      <div class="flex flex-col space-y-4 p-4">
+        <span class="font-bold text-wrap">Doctor Name</span>
+        <span class="text-wrap">scheduled: oct15, 2024, 10pm</span>
+        <span class="text-wrap">estado: confirmado</span>
+        <button
+          class="bg-primary text-white px-4 py-2 rounded-2xl mt-4 hover:bg-primary/80 transition-colors duration-300 ease-in-out"
+        >
+          Ver Detalles
+        </button>
+      </div>
+      <img
+        src="https://th.bing.com/th/id/R.215c1ff399e961851cc11a7810886a0e?rik=oZfxvnavGwz6cA&riu=http%3a%2f%2fwww.writergirl.com%2fwp-content%2fuploads%2f2014%2f11%2fDoctor-790X1024.jpg&ehk=CmnYm47Si7SLogCKQcVQ9Onueou53ycpcjvFFc3Ej00%3d&risl=&pid=ImgRaw&r=0"
+        alt="doctor"
+        class="w-40 h-40 rounded-lg"
+      />
+    </div>
+  </div>
+</div>
+
+<!-- CHANGE PASSWORD -->
+<div class="p-5 ml-5">
+  <span class="text-3xl font-semibold">Cambiar Contraseña</span>
+  <Form
+    [formGroup]="changePasswordForm"
+    (ngSubmit)="changePassword()"
+    class="mt-4"
+  >
+    <div class="flex flex-col space-y-4 lg:w-1/2">
+      <div class="flex flex-col space-y-2">
+        <label for="currentPassword">Contraseña Actual</label>
+        <input
+          type="password"
+          formControlName="currentPassword"
+          class="border border-gray-200 rounded-lg p-2"
+        />
+      </div>
+      <div class="flex flex-col space-y-2">
+        <label for="newPassword">Nueva Contraseña</label>
+        <input
+          type="password"
+          formControlName="newPassword"
+          class="border border-gray-200 rounded-lg p-2"
+        />
+      </div>
+      <div class="flex flex-col space-y-2">
+        <label for="confirmPassword">Confirmar Contraseña</label>
+        <input
+          type="password"
+          formControlName="confirmPassword"
+          class="border border-gray-200 rounded-lg p-2"
+        />
+      </div>
+      <button
+        type="submit"
+        class="w-max bg-primary text-white px-4 py-2 rounded-2xl mt-4 hover:bg-primary/80 transition-colors duration-300 ease-in-out"
+      >
+        Cambiar Contraseña
+      </button>
+    </div>
+  </Form>
+</div>
+
+<!-- CONFIRM EMAIL -->
+
+<div class="p-5 ml-5">
+  <span class="text-3xl font-semibold">Confirmar Email</span>
+
+  <div class="flex flex-col space-y-4 lg:w-1/2">
+    <div class="flex flex-col space-y-2">
+      <label for="email"
+        >Por razones de seguridad confirma tu email:
+        <span class="font-bold">
+          {{ profile.email || null }}
+        </span>
+      </label>
+    </div>
+    <button
+      type="submit"
+      class="w-max bg-primary text-white px-4 py-2 rounded-2xl mt-4 hover:bg-primary/80 transition-colors duration-300 ease-in-out"
+    >
+      Confirmar Email
+    </button>
+  </div>
+</div>
+
+<!-- CONFIRM PHONE -->
+<div class="p-5 ml-5">
+  <span class="text-3xl font-semibold">Confirmar telefono</span>
+
+  <div class="flex flex-col space-y-4 lg:w-1/2">
+    <div class="flex flex-col space-y-2">
+      <label for="email"
+        >Por razones de seguridad confirma tu telefono:
+        <span class="font-bold">
+          {{ profile.phone || null }}
+        </span>
+      </label>
+    </div>
+    <button
+      type="submit"
+      class="w-max bg-primary text-white px-4 py-2 rounded-2xl mt-4 hover:bg-primary/80 transition-colors duration-300 ease-in-out"
+    >
+      Confirmar telefono
+    </button>
+  </div>
+</div>

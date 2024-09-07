@@ -1,515 +1,95 @@
-<div
-  class="h-full w-full bg-gradient-to-b from-purple via-purple to-blue-600 flex flex-col"
+<nav
+  class="bg-white text-black fixed w-full top-0 left-0 z-50 shadow-md"
+  aria-label="Main Navigation"
 >
-  <nav
-    class="flex w-full h-14 px-5 py-5 items-center fixed z-20 text-white font-bold backdrop-blur-sm bg-black/30 md:bg-black/40"
-  >
-    <div class="flex-grow basis-0 gap-2">
-      <img src="/assets/logoproadent.png" class="h-10 w-10 rounded-xl" />
+  <div class="container mx-auto w-full px-4 py-2 flex justify-evenly">
+    <div class="text-2xl font-bold flex basis-0 w-full">
+      <a class="hover:text-gray-400" aria-label="Inicio">HealthCare</a>
     </div>
-    @if(userlogged){
-    <ul class="flex-grow basis-0 flex justify-end gap-5">
-      @if(userAdmin){
-      <li class="px-2 py-1"><a href="/dashboard">Admin</a></li>
-      }
-      <li class="px-2 py-1"><a href="/profile" class="">Mi Perfil</a></li>
+    <ul class="flex space-x-10 items-center justify-center">
       <li>
-        <button
-          (click)="logout()"
-          class="bg-transparent border border-red rounded-lg hover:bg-red hover:text-white hover:border-white transition-colors ease-in-out duration-500 px-2 py-1"
+        <a class="hover:text-gray-400" aria-label="Inicio">Inicio</a>
+      </li>
+      <li>
+        <a class="hover:text-gray-400" aria-label="Servicios">Servicios</a>
+      </li>
+      <li>
+        <a class="hover:text-gray-400" aria-label="Servicios">Servicios</a>
+      </li>
+      <li>
+        <a class="hover:text-gray-400" aria-label="Sobre Nosotros"
+          >Sobre Nosotros</a
         >
-          cerrar sesion
-        </button>
+      </li>
+      <li>
+        <a class="hover:text-gray-400" aria-label="Contacto">Contacto</a>
       </li>
     </ul>
-    } @if(!userlogged){
-    <ul class="flex-grow basis-0 flex justify-end gap-5">
-      <li><a href="/login">Iniciar Sesion</a></li>
-      <li><a href="/register">Registrarse</a></li>
-    </ul>
-    }
-  </nav>
+    <div class="flex space-x-2 basis-0 w-full">
+      <!-- (click)="toggleLanguage()" -->
+      <!-- <a
+        class="text-nowrap px-2 py-1 flex items-center justify-center font-encode-sans text-sm leading-6 font-normal bg-white rounded-xl text-primary"
+      >
+        Registrarse
+      </a> -->
 
-  <section
-    class="min-h-screen flex flex-col bg-black items-center justify-center text-white bg-fixed bg-center bg-cover bg-no-repeat relative"
-  >
+      <a
+        href="/login"
+        class="text-nowrap px-2 py-1 flex items-center justify-center font-encode-sans text-sm leading-6 font-normal text-white bg-primary rounded-xl hover:bg-secondary"
+      >
+        Iniciar Sesión
+      </a>
+    </div>
+  </div>
+</nav>
+<!-- main -->
+<main class="h-screen w-screen flex items- justify-center">
+  <section class="w-full pt-16 bg-white">
     <div
-      class="absolute inset-0 opacity-15 bg-no-repeat bg-cover bg-center bg-fixed"
-      style="
-        background-image: url('https://th.bing.com/th/id/OIP.yHXxctHzZXIjQQv7Rtp9eAHaEo?w=1080&h=675&rs=1&pid=ImgDetMain');
-      "
-    ></div>
-    <h1 [@fadeInOut] class="">
-      <span class="text-4xl md:text-6xl uppercase font-anta">proadent 🦷</span>
-    </h1>
-    <h1>
-      <span class="text-2xl md:text-3xl uppercase font-anta"
-        >Clinica Dental</span
-      >
-    </h1>
-    <a
-      href="/register"
-      class="text-white bg-purple/100 rounded-lg px-5 py-3 mt-10"
-      >Concreta una cita</a
+      class="items-center w-full px-5 py-12 mx-auto md:px-12 lg:px-16 max-w-7xl lg:py-24"
     >
-  </section>
-
-  <section
-    class="min-h-screen w-full flex flex-col items-center justify-center text-white"
-  >
-    <div class="py-16 md:py-5 w-5/6 text-center">
-      <h1 [@fadeInOut]>
-        <span class="md:text-5xl">Clinica PROADENT 🪥</span>
-      </h1>
-      <h2 class="text-3xl">¿Porque Escogernos?</h2>
-      <p class="md:text-lg text-center">
-        En Clinica Dental Proadent, ofrecemos mas que simples tratamientos
-        dentales: brindamos experiencias que transforman sonrisas y mejoran
-        vidas, Aqui hay algunas razones clave para elegirnos:
-      </p>
-      <section
-        [@fadeInOut]
-        class="grid grid-cols-1 md:grid-cols-3 [&>div]:w-3/4 justify-items-center [&>div]:text-center [&>div]:flex [&>div]:flex-col [&>div]:items-center [&>div]:justify-center [&>div]:border [&>div]:border-white [&>div]:rounded-lg [&>div]:py-4 [&>div]:px-6 [&>div]:backdrop-blur-md [&>div]:bg-white/10 gap-4 mt-20"
-      >
-        <div
-          class="hover:scale-110 transition-transform ease-linear duration-200"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="icon icon-tabler icon-tabler-school"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            fill="none"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-            <path d="M22 9l-10 -4l-10 4l10 4l10 -4v6" />
-            <path d="M6 10.6v5.4a6 3 0 0 0 12 0v-5.4" />
-          </svg>
-          <h2 class="text-xs">Experiencia y Profesionalismo</h2>
-          <p>
-            Contamos con un equipo de dentistas altamente calificados y con años
-            de experiencia, comprometidos con la excelencia en el cuidado
-            dental.
-          </p>
-        </div>
-        <div
-          class="hover:scale-110 transition-transform ease-linear duration-200"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="icon icon-tabler icon-tabler-calendar-month"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            fill="none"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-            <path
-              d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z"
-            />
-            <path d="M16 3v4" />
-            <path d="M8 3v4" />
-            <path d="M4 11h16" />
-            <path d="M7 14h.013" />
-            <path d="M10.01 14h.005" />
-            <path d="M13.01 14h.005" />
-            <path d="M16.015 14h.005" />
-            <path d="M13.015 17h.005" />
-            <path d="M7.01 17h.005" />
-            <path d="M10.01 17h.005" />
-          </svg>
-          <h2>Tecnologia de Vanguardia</h2>
-          <p>
-            Utilizamos las últimas tecnologías y técnicas dentales para asegurar
-            tratamientos eficientes, cómodos y de la más alta calidad.
-          </p>
-        </div>
-        <div
-          class="hover:scale-110 transition-transform ease-linear duration-200"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="icon icon-tabler icon-tabler-wave-saw-tool"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            fill="none"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-            <path d="M3 12h5l4 8v-16l4 8h5" />
-          </svg>
-          <h2>Ambiente Confortable y Acogedor</h2>
-          <p>
-            Nuestra clínica está diseñada pensando en su comodidad, creando un
-            entorno relajante para aliviar cualquier ansiedad dental.
-          </p>
-        </div>
-      </section>
-    </div>
-  </section>
-
-  <section
-    class="w-full grid grid-cols-1 md:grid-cols-1 place-items-center justify-center text-white"
-  >
-    <h1>Concreta una cita:</h1>
-    <!-- @if(isLoadingDate){
-
-    } -->
-
-    <div class="w-2/3">
-      @if(isLoadingDate){
-      <div [@fadeInOut] class="text-white flex items-center justify-center">
-        @if(!formSuccessfully && !formError){
-
-        <mat-card
-          [@fadeInOut]
-          class="text-center flex flex-col items-center justify-center p-10"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="icon icon-tabler animate-spin icons-tabler-outline icon-tabler-loader-3"
-          >
-            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-            <path d="M3 12a9 9 0 0 0 9 9a9 9 0 0 0 9 -9a9 9 0 0 0 -9 -9" />
-            <path d="M17 12a5 5 0 1 0 -5 5" />
-          </svg>
-          <mat-label class="underline"> Cargando... </mat-label>
-          <mat-card-content
-            >Porfavor aguarda hasta que se confirme tu cita</mat-card-content
-          >
-        </mat-card>
-        } @if(formSuccessfully){
-        <mat-card
-          [@fadeInOut]
-          class="text-center flex flex-col items-center justify-center p-10"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="icon icon-tabler icons-tabler-outline icon-tabler-check"
-          >
-            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-            <path d="M5 12l5 5l10 -10" />
-          </svg>
-          <mat-label class=""> tu cita fue solicitada! </mat-label>
-        </mat-card>
-        } @if(formError){
-        <mat-card
-          [@fadeInOut]
-          class="text-center flex flex-col items-center justify-center p-10"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="icon icon-tabler icons-tabler-outline icon-tabler-face-id-error"
-          >
-            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-            <path d="M4 8v-2a2 2 0 0 1 2 -2h2" />
-            <path d="M4 16v2a2 2 0 0 0 2 2h2" />
-            <path d="M16 4h2a2 2 0 0 1 2 2v2" />
-            <path d="M16 20h2a2 2 0 0 0 2 -2v-2" />
-            <path d="M9 10h.01" />
-            <path d="M15 10h.01" />
-            <path d="M9.5 15.05a3.5 3.5 0 0 1 5 0" />
-          </svg>
-          <mat-label class=""
-            >Ocurrio un error :c, intenta luego porfavor
-          </mat-label>
-        </mat-card>
-        }
-      </div>
-      } @if(!isLoadingDate){
-      <mat-stepper #stepper [@fadeInOut]>
-        <mat-step
-          [stepControl]="firstFormGroup"
-          errorMessage="Fecha es requerida."
-        >
-          <form [formGroup]="firstFormGroup">
-            <ng-template matStepLabel>Dia</ng-template>
-            <mat-form-field>
-              <mat-label>Escoge una fecha</mat-label>
-              <input
-                matInput
-                [matDatepicker]="picker"
-                [matDatepickerFilter]="dayFilter"
-                formControlName="firstCtrl"
-                required
-              />
-              <mat-hint>MM/DD/YYYY</mat-hint>
-              <mat-datepicker-toggle
-                matSuffix
-                [for]="picker"
-              ></mat-datepicker-toggle>
-              <mat-datepicker #picker></mat-datepicker>
-            </mat-form-field>
-            <div>
-              <p class="pt-2 ml-2 italic text-md">
-                Escoge una fecha para tu cita
-              </p>
-              <button mat-button matStepperNext>Siguiente</button>
-            </div>
-          </form>
-        </mat-step>
-        <mat-step
-          [stepControl]="secondFormGroup"
-          errorMessage="Hora es requerida."
-        >
-          <form [formGroup]="secondFormGroup">
-            <ng-template matStepLabel>Hora</ng-template>
-            <mat-form-field>
-              <mat-label>Hora</mat-label>
-              <mat-select formControlName="secondCtrl">
-                @for(hour of hours; track hour) {
-                <mat-option [value]="hour">{{ hour }}</mat-option>
-                }
-              </mat-select>
-            </mat-form-field>
-            <div>
-              <p class="pt-2 ml-2 italic text-md">Selecciona una hora</p>
-              <button mat-button matStepperPrevious>Anterior</button>
-              <button mat-button matStepperNext>Siguiente</button>
-            </div>
-          </form>
-        </mat-step>
-        <mat-step
-          [stepControl]="thirdFormGroup"
-          errorMessage="Razon es requerida."
-        >
-          <form [formGroup]="thirdFormGroup">
-            <ng-template matStepLabel>Razon</ng-template>
-            <mat-form-field>
-              <mat-label>Razon</mat-label>
-              <input matInput formControlName="thirdCtrl" required />
-              <mat-hint>100 caracteres maximo </mat-hint>
-            </mat-form-field>
-            <div>
-              <p class="pt-2 ml-2 italic text-md">
-                *Explicanos tu razon de consulta.
-              </p>
-              <button mat-button matStepperPrevious>Anterior</button>
-              <button mat-button matStepperNext>Siguiente</button>
-            </div>
-          </form>
-        </mat-step>
-
-        <mat-step>
-          <ng-template matStepLabel>Enviar</ng-template>
-          <p class="pt-2 ml-2 italic text-md">
-            <span class="block not-italic text-lg font-bold">Eso es todo!</span>
-            Estas listo para tu proxima cita en proadent.
-          </p>
-          <div>
-            <button mat-button matStepperPrevious>Anterior</button>
-            <button mat-button (click)="SubmitData()">Enviar</button>
-          </div>
-        </mat-step>
-      </mat-stepper>
-      }
-    </div>
-  </section>
-
-  <section class="text-white body-font relative">
-    <div class="container px-5 py-24 mx-auto flex sm:flex-nowrap flex-wrap">
-      <div
-        class="lg:w-1/3 md:w-1/2 flex flex-col md:mr-auto w-full md:py-8 mt-8 md:mt-0"
-      >
-        <form (submit)="SubmitContact()" novalidate>
-          <h2 class="text-gray-900 text-lg mb-1 font-medium title-font">
-            <span> Contactanos 📧</span>
-          </h2>
-          <p class="leading-relaxed mb-5 text-white">
-            Si tienes dudas rellana este formulario y nos contactaremos contigo.
-          </p>
-          <div class="relative mb-4">
-            <label for="name" class="leading-7 text-sm text-white"
-              >Nombre</label
+      <div class="flex w-full mx-auto text-left">
+        <div class="flex justify-center items-start w-full">
+          <img
+            src="https://th.bing.com/th/id/OIP.t3gZp5ZM8tusmGZNrfQXBgHaJo?rs=1&pid=ImgDetMain"
+            alt="hero"
+            class="w-16 h-16 rounded-full -translate-y-10 -translate-x-14"
+          />
+          <div class="text-center">
+            <h1>
+              <span
+                class="max-w-5xl text-2xl font-bold leading-none tracking-tighter text-neutral-600 md:text-5xl lg:text-6xl lg:max-w-7xl"
+              >
+                Saca tu cita online <br class="hidden lg:block" />
+                Solo en <strong class="text-primary">Proadent</strong>
+              </span>
+            </h1>
+            <p
+              class="max-w-xl mx-auto mt-8 text-base leading-relaxed text-gray-500"
             >
-            <input
-              type="text"
-              id="name"
-              name="name"
-              [(ngModel)]="contactForm.name"
-              #name="ngModel"
-              required
-              class="w-full text-black bg-white rounded border border-gray-300 focus:border-red focus:ring-2 focus:ring-red text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-            />
-            @if(name.errors && (name.dirty || name.touched)){
-            <div [@fadeInOut] class="text-red text-sm mt-1">
-              Nombre es requerido
-            </div>
-            }
-          </div>
-          <div class="relative mb-4">
-            <label for="name" class="leading-7 text-sm text-white"
-              >Telefono</label
-            >
-            <input
-              type="tel"
-              id="tel"
-              name="tel"
-              placeholder="+591"
-              [(ngModel)]="contactForm.phone"
-              #phone="ngModel"
-              required
-              minlength="8"
-              class="w-full text-black bg-white rounded border border-gray-300 focus:border-red focus:ring-2 focus:ring-red text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-            />
-            @if(phone.invalid && (phone.dirty || phone.touched)){
-            <div [@fadeInOut] class="text-red text-sm mt-1">
-              Ingrese un telefono valido
-            </div>
-            }
-          </div>
-
-          <div class="relative mb-4">
-            <label for="email" class="leading-7 text-sm text-white"
-              >Email</label
-            >
-            <input
-              type="email"
-              id="email"
-              name="email"
-              [(ngModel)]="contactForm.email"
-              #email="ngModel"
-              required
-              email
-              class="w-full text-black bg-white rounded border border-gray-300 focus:border-red focus:ring-2 focus:ring-red text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-            />
-            @if(email.invalid && (email.dirty || email.touched)){
-            @if(email.errors) { @if(email.errors['email']){
-            <div [@fadeInOut] class="text-red text-sm mt-1">
-              ingrese un email valido
-            </div>
-            } @if(email.errors['required']){
-            <div [@fadeInOut] class="text-red text-sm mt-1">
-              El campo email es obligatorio
-            </div>
-            } } }
-          </div>
-          <div class="relative mb-4">
-            <label for="message" class="leading-7 text-sm text-white"
-              >mensaje</label
-            >
-            <textarea
-              id="message"
-              name="message"
-              [(ngModel)]="contactForm.message"
-              required
-              #message="ngModel"
-              minlength="10"
-              class="w-full text-black bg-white rounded border border-gray-300 focus:border-red focus:ring-2 focus:ring-red h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"
-            ></textarea>
-            @if(message.invalid && (message.dirty || message.touched)){
-            <div [@fadeInOut] class="text-red text-sm mt-1">
-              El campo mensaje tiene que ser mayor a 10 caracteres
-            </div>
-            }
-          </div>
-          <button
-            type="submit"
-            [disabled]=""
-            class="text-white flex items-center justify-center gap-2 bg-red border-0 py-2 px-6 focus:outline-none hover:bg-red/80 rounded text-lg"
-          >
-            @if(isLoading){
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="icon icon-tabler animate-spin icons-tabler-outline icon-tabler-loader-3"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M3 12a9 9 0 0 0 9 9a9 9 0 0 0 9 -9a9 9 0 0 0 -9 -9" />
-              <path d="M17 12a5 5 0 1 0 -5 5" />
-            </svg>
-            } Contactar
-          </button>
-          <p class="text-xs italic font-thin text-gray-500 mt-3">
-            al hacer click en contactar aceptas que se envien tus datos
-            (previamente rellenados) a los administradores de la pagina proadent
-          </p>
-        </form>
-      </div>
-      <div
-        class="lg:w-2/3 md:w-1/2 bg-gray-300 rounded-lg overflow-hidden sm:ml-10 p-10 flex items-end justify-start relative"
-      >
-        <iframe
-          width="100%"
-          height="100%"
-          class="absolute inset-0 dark:grayscale"
-          frameborder="0"
-          title="map"
-          marginheight="0"
-          marginwidth="0"
-          scrolling="yes"
-          src="https://maps.google.com/maps?width=1000%&height=1000&hl=en&q=-16.479031854948943,-68.12093900024703&ie=UTF8&t=&z=15&iwloc=B&output=embed&maptype=dark"
-        ></iframe>
-        <div
-          class="relative flex flex-wrap py-6 rounded shadow-md bg-gray text-white mt-72"
-        >
-          <div class="lg:w-1/2 px-6">
-            <h2
-              class="title-font font-semibold text-gray-900 tracking-widest text-xs"
-            >
-              Dirección
-            </h2>
-            <p class="mt-1">
-              Calle Monseñor Abel Antezana Nro. 250, Villa Fatima, La Paz,
-              Bolivia
+              Gratis, Sencillo, Rápido y Seguro. nuestro sistema de citas online
+              te permite agendar tu cita en clinica proadent de manera rapida y
+              segura.
             </p>
-          </div>
-          <div class="lg:w-1/2 px-6 mt-4 lg:mt-0">
-            <h2 class="">Correo electronico:</h2>
-            <a
-              href="mailto:nelsonarielcortez1@gmail.com"
-              class="text-red leading-relaxed"
-              >nelsonarielcortez1&#64;gmail.com</a
+            <div
+              class="flex justify-center w-full max-w-2xl gap-2 mx-auto mt-6"
             >
-            <h2>Telefono:</h2>
-            <p class="leading-relaxed">+591 75217015</p>
+              <div class="mt-3 rounded-lg sm:mt-0">
+                <button
+                  class="items-center block px-5 py-4 text-base font-medium text-center text-white transition duration-500 ease-in-out transform bg-primary lg:px-10 rounded-xl hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  Get bundle
+                </button>
+              </div>
+            </div>
           </div>
+          <img
+            src="https://th.bing.com/th/id/OIP.t3gZp5ZM8tusmGZNrfQXBgHaJo?rs=1&pid=ImgDetMain"
+            alt="hero"
+            class="w-16 h-16 rounded-full"
+          />
         </div>
       </div>
     </div>
   </section>
-</div>
+</main>

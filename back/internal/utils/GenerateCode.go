@@ -1,14 +1,12 @@
 package utils
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 )
 
 func GenerateCode(code string) (string, error) {
 	parts := strings.Split(code, "-")
-	fmt.Println(code, "testing...")
 
 	if len(parts) != 2 {
 		return "", &ValidationError{Field: "code", Message: "invalid code format."}

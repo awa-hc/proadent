@@ -1,13 +1,12 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: "class",
   content: ["./src/**/*.{html,ts}"],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
-        purple: "#AB1C49",
-        red: "#FF3562",
-        gray: "#1E1A1D",
+        primary: "#8659D3FF",
+        secondary: "#7644CD",
       },
     },
   },

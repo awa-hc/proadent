@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"back/internal/domain/entities"
 	"back/internal/domain/services"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -41,14 +43,21 @@ func (h *AuthHandler) Logout(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "Logout successful"})
 }
 func (h *AuthHandler) LoginWithEmail(c *gin.Context) {
-	email := c.PostForm("email")
-	password := c.PostForm("password")
+	var Request entities.Login
 
-	token, err := h.AuthService.LoginWithEmail(c, email, password)
+	if err := c.ShouldBindJSON(&Request); err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	token, err := h.AuthService.LoginWithEmail(c, Request.Email, Request.Password)
 	if err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
+
+	c.SetSameSite(http.SameSiteLaxMode)
+	c.SetCookie("Auth", token, 3600*24, "/", "", false, true)
 
 	c.JSON(200, gin.H{"token": token})
 }

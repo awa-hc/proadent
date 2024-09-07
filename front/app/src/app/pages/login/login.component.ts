@@ -1,78 +1,53 @@
-import { Component, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { MatCard, MatCardModule } from '@angular/material/card';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { DataService } from '../../data.service';
-import { StorageService } from '../../storage.service';
+import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    MatLabel,
-    MatCardModule,
-    MatCard,
-    MatFormField,
-  ],
-  providers: [DataService],
-
+  imports: [ReactiveFormsModule],
+  providers: [HttpClient],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css',
+  styleUrls: ['./login.component.css'],
 })
-export class LoginComponent implements OnInit {
-  loginForm = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', Validators.required],
-  });
+export class LoginComponent {
+  loginForm: FormGroup;
 
   constructor(
+    private http: HttpClient,
     private fb: FormBuilder,
-    private _snackBar: MatSnackBar,
-    private dataService: DataService,
-    private storageService: StorageService,
     private router: Router
-  ) {}
-
-  ngOnInit(): void {
-    if (this.storageService.getItem('token')) {
-      this.router.navigate(['/']);
-    }
+  ) {
+    this.loginForm = this.fb.group({
+      email: '',
+      password: '',
+    });
   }
 
-  onSubmit(): void {
-    console.log('asdasd');
-    if (this.loginForm.get('email')?.invalid) {
-      this._snackBar.open('El campo email es requerido', 'Aceptar', {
-        duration: 2000,
-      });
-    }
-    if (this.loginForm.get('password')?.invalid) {
-      this._snackBar.open('El campo contraseña es requerido', 'Aceptar', {
-        duration: 2000,
-      });
-    }
+  onSubmit() {
+    const loginData = this.loginForm.value;
+    this.http
+      .post<{ token: string }>(
+        'http://localhost:8080/auth/login/email',
+        loginData
+      )
+      .subscribe(
+        (response) => {
+          console.log('Login exitoso', response);
 
-    if (this.loginForm.valid) {
-      console.log(this.loginForm.value);
-      this.dataService.login(this.loginForm.value).subscribe((response) => {
-        if (response.token) {
-          this.storageService.setItem('token', response.token);
-          this.router.navigate(['/']);
-        } else {
-          this._snackBar.open(response.error, 'Aceptar', {
-            duration: 2000,
-          });
+          // Guarda el token en una cookie llamada 'auth'
+          const expires = new Date();
+          expires.setTime(expires.getTime() + 24 * 60 * 60 * 1000); // 7 días de expiración
+
+          document.cookie = `Auth=${
+            response.token
+          }; expires=${expires.toUTCString()}; path=/; secure; samesite=strict`;
+          this.router.navigate(['/profile']);
+        },
+        (error) => {
+          console.error('Error en el login', error);
         }
-      });
-    }
+      );
   }
 }

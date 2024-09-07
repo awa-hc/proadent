@@ -4,6 +4,7 @@ import (
 	"back/internal/delivery/handlers"
 	"back/internal/domain/services"
 	"back/internal/repository/appointment"
+	"back/internal/repository/clinic"
 	"back/internal/repository/userappointments"
 
 	"github.com/gin-gonic/gin"
@@ -14,8 +15,9 @@ func SetupAppointmentRouter(router *gin.Engine, db *gorm.DB) {
 
 	ApointmentRepository := appointment.NewAppointmentRepository(*db)
 	UserAppointmentsRepository := userappointments.NewUserAppointmentsRepository(*db)
+	ClinicRepository := clinic.NewClinicRepository(*db)
 
-	appointmentService := services.NewAppointmentService(ApointmentRepository, UserAppointmentsRepository)
+	appointmentService := services.NewAppointmentService(ApointmentRepository, UserAppointmentsRepository, ClinicRepository)
 	appointmentHandlers := handlers.NewAppointmentHandler(*appointmentService)
 
 	AppointmentGroup := router.Group("/appointment")
@@ -25,6 +27,7 @@ func SetupAppointmentRouter(router *gin.Engine, db *gorm.DB) {
 		AppointmentGroup.GET("/code/:code", appointmentHandlers.GetByCode)
 		AppointmentGroup.GET("/doctor/:doctorCI", appointmentHandlers.GetByDoctorCI)
 		AppointmentGroup.GET("/patient/:patientCI", appointmentHandlers.GetByPatientCI)
+		AppointmentGroup.GET("/all", appointmentHandlers.GetAll)
 		AppointmentGroup.PUT("/confirm/:code", appointmentHandlers.Confirm)
 		AppointmentGroup.PUT("/cancel/:code", appointmentHandlers.Cancel)
 		AppointmentGroup.PUT("/finish/:code", appointmentHandlers.Finish)

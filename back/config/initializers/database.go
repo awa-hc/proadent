@@ -17,7 +17,7 @@ func InitDB() (*gorm.DB, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %w", err)
 	}
-	if err := db.AutoMigrate(&entities.User{}, &entities.Appointment{}, &entities.UserAppointments{}); err != nil {
+	if err := db.AutoMigrate(&entities.User{}, &entities.Appointment{}, &entities.UserAppointments{}, &entities.Clinic{}); err != nil {
 		return nil, fmt.Errorf("failed to migrate database: %w", err)
 	}
 

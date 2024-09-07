@@ -14,4 +14,5 @@ type UserRepository interface {
 	GetByEmail(ctx context.Context, email string) (*dto.UserDTO, error)
 	UpdateUser(ctx context.Context, user *entities.User) error
 	DeleteUser(ctx context.Context, id int) error
+	Me(ctx context.Context) (*dto.UserDTO, error)
 }

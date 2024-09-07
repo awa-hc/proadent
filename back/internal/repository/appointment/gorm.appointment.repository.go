@@ -36,9 +36,7 @@ func (g *gormAppointmentRepository) Cancel(ctx context.Context, code string) err
 
 // Confirm implements AppointmentRepository.
 func (g *gormAppointmentRepository) Confirm(ctx context.Context, code string) error {
-	if err := g.db.First(&entities.Appointment{}, code).Error; err != nil {
-		return err
-	}
+
 	return g.db.Model(&entities.Appointment{}).Where("code = ?", code).Update("status", "confirmed").Error
 
 }
@@ -67,34 +65,34 @@ func (g *gormAppointmentRepository) Created(ctx context.Context, appointment *en
 
 // Delete implements AppointmentRepository.
 func (g *gormAppointmentRepository) Delete(ctx context.Context, code string) error {
-	if err := g.db.First(&entities.Appointment{}, code).Error; err != nil {
-		return err
-	}
 	return g.db.Model(&entities.Appointment{}).Where("code = ?", code).Update("status", "deleted").Error
-
 }
 
 // Finish implements AppointmentRepository.
 func (g *gormAppointmentRepository) Finish(ctx context.Context, code string) error {
-	if err := g.db.First(&entities.Appointment{}, code).Error; err != nil {
-		return err
-	}
+
 	return g.db.Model(&entities.Appointment{}).Where("code = ?", code).Update("status", "finished").Error
 
 }
 
 // GetByCode implements AppointmentRepository.
 func (g *gormAppointmentRepository) GetByCode(ctx context.Context, code string) (*entities.Appointment, error) {
-	if err := g.db.First(&entities.Appointment{}, code).Error; err != nil {
-		return nil, err
-	}
+
 	var appointment entities.Appointment
-	if err := g.db.Where("code = ?", code).First(&appointment).Error; err != nil {
+	if err := g.db.Where("code = ?", code).First(&appointment).Preload("ClinicVisit").Error; err != nil {
 		return nil, err
 	}
 
 	return &appointment, nil
 
+}
+
+func (g *gormAppointmentRepository) GetLastAppointmentByCI(ctx context.Context, ci string) (*entities.Appointment, error) {
+	var appointment entities.Appointment
+	if err := g.db.Where("patient_ci = ?", ci).Order("id DESC").First(&appointment).Error; err != nil {
+		return nil, err
+	}
+	return &appointment, nil
 }
 
 // GetByDoctorCI implements AppointmentRepository.
@@ -123,9 +121,6 @@ func (g *gormAppointmentRepository) GetByID(ctx context.Context, id int) (*entit
 // GetByPatientCI implements AppointmentRepository.
 func (g *gormAppointmentRepository) GetByPatientCI(ctx context.Context, patientCI string) ([]entities.Appointment, error) {
 
-	if err := g.db.First(&entities.Appointment{}, patientCI).Error; err != nil {
-		return nil, err
-	}
 	var appointments []entities.Appointment
 	if err := g.db.Where("patient_ci = ?", patientCI).Find(&appointments).Error; err != nil {
 		return nil, err
@@ -140,6 +135,13 @@ func (g *gormAppointmentRepository) GetLast(ctx context.Context) (*entities.Appo
 		return nil, err
 	}
 	return &appointment, nil
+}
+func (g *gormAppointmentRepository) GetAll(ctx context.Context) ([]entities.Appointment, error) {
+	var appointments []entities.Appointment
+	if err := g.db.Find(&appointments).Error; err != nil {
+		return nil, err
+	}
+	return appointments, nil
 }
 
 // Reject implements AppointmentRepository.

@@ -114,3 +114,8 @@ func (g *gormUserRepository) DeleteUser(ctx context.Context, id int) error {
 	}
 	return g.db.Delete(&entities.User{}, id).Error
 }
+
+func (g *gormUserRepository) Me(ctx context.Context) (*dto.UserDTO, error) {
+	user := dto.UserDTO{}
+	return &user, nil
+}

@@ -1,66 +1,43 @@
-import { Component, OnInit } from '@angular/core';
-import { StorageService } from '../../storage.service';
-import { Router } from '@angular/router';
-import { DataService } from '../../data.service';
-import { CommonModule } from '@angular/common';
-import { BrowserModule } from '@angular/platform-browser';
+import { HttpClient } from '@angular/common/http';
+import { Component, HostListener, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Route, Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [],
-  providers: [DataService, CommonModule, BrowserModule],
+  imports: [ReactiveFormsModule, RouterModule],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css',
 })
-export class ProfileComponent implements OnInit {
-  email: string = '';
-  fullname: string = '';
-  ci: string = '';
-  birthdate: string = '';
-  appointments: any[] = [];
-  phone: string = '';
-  createdat: string = '';
-  updatedat: string = '';
-  roledescription: string = '';
+export class ProfileComponent {
+  constructor(private router: Router) {}
+  isSidebarOpen = false;
 
-  constructor(
-    private dataService: DataService,
-    private storageService: StorageService,
-    private router: Router
-  ) {}
-
-  ngOnInit() {
-    if (!this.storageService.getItem('token')) {
-      this.router.navigate(['/login']);
-    }
-    this.dataService.getuserinfo().subscribe((response) => {
-      console.log(response);
-      console.log(response.ci);
-      this.email = response.email;
-      this.fullname = response.fullName;
-      this.ci = response.ci;
-      this.birthdate = response.birthDay;
-      this.phone = response.phone;
-      this.createdat = response.createdAt;
-      this.updatedat = response.updatedAt;
-      this.roledescription = response.role.description;
-      this.appointments = response.appointments;
-    });
+  gotoMe() {
+    this.router.navigate(['/profile/me']);
   }
 
-  getAppointmentStyle(status: string): string {
-    switch (status) {
-      case 'pending':
-        return 'background-color: yellow; color: black;';
-      case 'completed':
-        return 'background-color: green; color: white;';
-      case 'cancelled':
-        return 'background-color: red; color: white;';
-      case 'confirmed':
-        return 'background-color: blue; color: white;';
-      default:
-        return '';
+  gotoAppointments() {
+    this.router.navigate(['/profile/appointment']);
+  }
+
+  isMobile(): boolean {
+    const win = this.getWindow();
+    return win ? win.innerWidth < 1024 : false;
+  }
+
+  gotoClinics() {
+    this.router.navigate(['/profile/clinics']);
+  }
+
+  toggleSidebar() {
+    if (window.innerWidth < 1024) {
+      this.isSidebarOpen = !this.isSidebarOpen;
     }
+  }
+
+  getWindow(): Window | null {
+    return typeof window !== 'undefined' ? window : null;
   }
 }

@@ -4,6 +4,7 @@ import (
 	"back/config/initializers"
 	"back/internal/delivery/router"
 	"log"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -35,15 +36,19 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	route := gin.Default()
 
 	route.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000"},
-		AllowMethods:     []string{"PUT", "PATH", "GET", "DELETE"},
-		AllowHeaders:     []string{"Content-Type", "Auth"},
+		AllowOrigins:     []string{"http://localhost:4200"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Auth", "Content-Type"},
+		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
 	}))
 
 	router.SetupUserRouter(route, db)
 	router.SetupAppointmentRouter(route, db)
 	router.SetupUserAppointmentsRouter(route, db)
+	router.SetupAuthRouter(route, db)
+	router.SetupClinicRouter(route, db)
 
 	return route
 

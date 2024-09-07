@@ -1,41 +1,35 @@
-<div
-  class="h-screen w-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple via-red to-white dark:from-purple dark:via-red dark:to-gray"
->
-  <section class="w-80 md:w-96 bg-white p-8 rounded-lg shadow-lg">
-    <h1 class="text-3xl font-bold text-center">Iniciar Sesion</h1>
+<section class="h-screen w-screen flex items-center justify-center">
+  <section class="w-1/2 flex items-center justify-center">
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-      <div class="mb-4">
-        <label for="email" class="block text-gray-700 text-sm font-bold mb-2"
-          >Correo</label
-        >
+      <div class="flex flex-col space-y-4">
+        <h1 class="text-2xl font-bold text-center">Bienvenido de nuevo!</h1>
+        <p class="text-center">
+          Nos agrada verte de nuevo,<br />
+          por favor inicia sesión.
+        </p>
         <input
           type="email"
-          id="email"
           formControlName="email"
-          class="w-full p-2 border border-gray-300 rounded"
+          class="px-4 py-2 border border-gray-300 rounded-md"
+          placeholder="Correo Electrónico"
+          autofocus
+          autocomplete="email"
         />
-      </div>
-      <div class="mb-4">
-        <label for="password" class="block text-gray-700 text-sm font-bold mb-2"
-          >Contraseña</label
-        >
         <input
+          type="password"
           formControlName="password"
-          class="w-full p-2 border border-gray-300 rounded"
-          id="password"
-          type="password"
-          type="password"
-          id="password"
+          class="px-4 py-2 border border-gray-300 rounded-md"
+          placeholder="Contraseña"
+          autocomplete="current-password"
         />
-      </div>
-      <div class="flex justify-center items-center">
         <button
+          class="px-4 py-2 bg-primary text-white rounded-md"
           type="submit"
-          class="bg-red hover:bg-red/80 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
         >
-          Iniciar Sesion
+          Iniciar Sesión
         </button>
+        <a href="/register" class="text-center">Registrarse</a>
       </div>
     </form>
   </section>
-</div>
+</section>

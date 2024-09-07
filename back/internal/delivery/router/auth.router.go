@@ -23,7 +23,7 @@ func SetupAuthRouter(router *gin.Engine, db *gorm.DB) {
 	AuthGroup := router.Group("/auth")
 	{
 
-		AuthGroup.POST("/login", AuthHandler.LoginWithCI)
+		AuthGroup.POST("/login/ci", AuthHandler.LoginWithCI)
 		AuthGroup.POST("/login/email", AuthHandler.LoginWithEmail)
 		AuthGroup.POST("/logout", AuthHandler.Logout)
 		AuthGroup.GET("/user", middleware.RequireAuth(db), AuthHandler.GetUserByContext)

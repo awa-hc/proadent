@@ -117,3 +117,11 @@ func (h *UserHandler) DeleteUser(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "User deleted successfully"})
 
 }
+
+func (h *UserHandler) Me(c *gin.Context) {
+
+	user, _ := c.Get("user")
+
+	c.JSON(200, user)
+
+}

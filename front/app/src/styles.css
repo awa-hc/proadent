@@ -1,31 +1,18 @@
-@import url("https://fonts.googleapis.com/css2?family=Anta&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-* {
-  transition-property: background-color, border-color, color, fill, stroke,
-    opacity, box-shadow, transform;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 300ms;
-  transition-delay: 0ms;
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
+/* src/styles.css */
 * {
-  transition-property: fill, stroke;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 300ms;
-  transition-delay: 0ms;
-}
-
-.font-anta {
-  font-family: "Anta", sans-serif;
+  font-family: "Encode Sans";
+  src: url("/assets/fonts/EncodeSans-Regular.ttf") format("truetype");
   font-weight: 400;
-  font-style: normal;
-}
-
-* {
-  font-family: "Anta", sans-serif;
-  font-weight: 400;
-  font-style: normal;
 }

@@ -11,6 +11,7 @@ type AppointmentRepository interface {
 	GetByCode(ctx context.Context, code string) (*entities.Appointment, error)
 	GetByDoctorCI(ctx context.Context, doctorCI string) ([]entities.Appointment, error)
 	GetByPatientCI(ctx context.Context, patientCI string) ([]entities.Appointment, error)
+	GetAll(ctx context.Context) ([]entities.Appointment, error)
 	GetLast(ctx context.Context) (*entities.Appointment, error)
 	Confirm(ctx context.Context, code string) error
 	Cancel(ctx context.Context, code string) error
@@ -26,5 +27,6 @@ type AppointmentRepository interface {
 	UpdatePrice(ctx context.Context, code string, price float64) error
 	UpdateType(ctx context.Context, code string, appointmentType string) error
 	GenerateCode() (string, error)
+	GetLastAppointmentByCI(ctx context.Context, ci string) (*entities.Appointment, error)
 	WithTransaction(ctx context.Context, fn func(ctx context.Context) error) error
 }

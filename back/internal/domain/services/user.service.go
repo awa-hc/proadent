@@ -47,3 +47,6 @@ func (us *UserService) UpdateUser(ctx context.Context, user *entities.User) erro
 func (us *UserService) DeleteUser(ctx context.Context, id int) error {
 	return us.UserRepository.DeleteUser(ctx, id)
 }
+func (us *UserService) Me(ctx context.Context) (*dto.UserDTO, error) {
+	return us.UserRepository.Me(ctx)
+}

@@ -3,18 +3,19 @@ package services
 import (
 	"back/internal/domain/entities"
 	"back/internal/repository/auth"
+	"back/internal/repository/user"
 	"context"
 )
 
 type Auth struct {
 	AuthRepository auth.AuthRepository
-	UserService    *UserService
+	UserRepository *user.UserRepository
 }
 
-func NewAuthService(authRepository auth.AuthRepository, userService *UserService) *Auth {
+func NewAuthService(authRepository auth.AuthRepository, userRepository user.UserRepository) *Auth {
 	return &Auth{
 		AuthRepository: authRepository,
-		UserService:    userService,
+		UserRepository: &userRepository,
 	}
 }
 
