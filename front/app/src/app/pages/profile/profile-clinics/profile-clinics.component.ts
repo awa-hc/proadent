@@ -10,6 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { ConfigService } from '../../../config.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ProfileClinicsDialogComponent } from './dialog/profile-clinics-dialog';
+import { Router } from '@angular/router';
 
 /**
  * @title Table with pagination
@@ -42,7 +43,8 @@ export class ProfileClinicsComponent implements AfterViewInit {
   constructor(
     private config: ConfigService,
     private http: HttpClient,
-    private storage: StorageService
+    private storage: StorageService,
+    private router: Router
   ) {}
   @ViewChild(MatPaginator)
   paginator!: MatPaginator;
@@ -52,6 +54,12 @@ export class ProfileClinicsComponent implements AfterViewInit {
   }
 
   getClinics() {
+    if (!this.storage.getItem('ci')) {
+      console.error('No se ha encontrado el CI del paciente');
+      this.router.navigate(['/profile/me']);
+      return;
+    }
+
     this.http
       .get<Clinics[]>(
         'http://localhost:8080/clinic/patient/' + this.storage.getItem('ci'),
