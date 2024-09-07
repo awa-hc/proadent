@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { StorageService } from '../../storage.service';
 
 @Component({
   selector: 'app-home',
@@ -6,4 +7,12 @@ import { Component } from '@angular/core';
   imports: [],
   templateUrl: './home.component.html',
 })
-export class HomeComponent {}
+export class HomeComponent implements OnInit {
+  constructor(private _storage: StorageService) {}
+
+  ngOnInit(): void {
+
+    
+
+  }
+}

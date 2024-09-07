@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormGroup, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { StorageService } from '../../../storage.service';
+import { CookieService } from '../../../cookie.service';
 
 @Component({
   selector: 'app-me',
@@ -17,7 +18,9 @@ export class MeComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private storage: StorageService,
+    private _cookieService: CookieService
   ) {
     this.changePasswordForm = this.fb.group({
       currentPassword: '',
@@ -30,7 +33,11 @@ export class MeComponent implements OnInit {
   isSidebarOpen = false;
 
   ngOnInit(): void {
-    this.getProfile();
+    if (this._cookieService.getCookie('Auth') == null) {
+      this.router.navigate(['/login']);
+    } else {
+      this.getProfile();
+    }
   }
 
   changePassword() {
@@ -38,12 +45,17 @@ export class MeComponent implements OnInit {
   }
 
   getProfile() {
+    if (!document.cookie || !document.cookie.includes('Auth')) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
     this.http
       .get('http://localhost:8080/user/me', { withCredentials: true })
       .subscribe(
         (response) => {
           this.profile = response;
-          localStorage.setItem('ci', this.profile.ci);
+          this.storage.setItem('ci', this.profile.ci);
           if (this.profile.birthdate) {
             this.profile.birthdate = new Date(
               this.profile.birthdate

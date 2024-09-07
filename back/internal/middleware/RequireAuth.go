@@ -17,6 +17,7 @@ func RequireAuth(db *gorm.DB) gin.HandlerFunc {
 
 		tokenString, err := c.Cookie("Auth")
 		if err != nil {
+			fmt.Println(err, "Error in RequireAuth", err.Error())
 			c.JSON(401, gin.H{"message": "Unauthorized"})
 			c.Abort()
 			return
