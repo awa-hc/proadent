@@ -53,7 +53,7 @@ export class MeComponent implements OnInit {
     this.http
       .get('http://localhost:8080/user/me', { withCredentials: true })
       .subscribe(
-        (response) => {
+        (response: any) => {
           this.profile = response;
           this.storage.setItem('ci', this.profile.ci);
           if (this.profile.birthdate) {
@@ -62,7 +62,7 @@ export class MeComponent implements OnInit {
             ).toLocaleDateString();
           }
         },
-        (error) => {
+        (error: any) => {
           console.error('Error al obtener el perfil', error);
         }
       );

@@ -7,14 +7,10 @@ import { format, parseISO } from 'date-fns';
 import { formatUtcToLocal } from '../../../utils/date-utils';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { ConfigService } from '../../../config.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ProfileClinicsDialogComponent } from './dialog/profile-clinics-dialog';
 import { Router } from '@angular/router';
 
-/**
- * @title Table with pagination
- */
 @Component({
   selector: 'app-profile-clinics',
   standalone: true,
@@ -41,7 +37,6 @@ export class ProfileClinicsComponent implements AfterViewInit {
   readonly dialog = inject(MatDialog);
 
   constructor(
-    private config: ConfigService,
     private http: HttpClient,
     private storage: StorageService,
     private router: Router
@@ -87,9 +82,7 @@ export class ProfileClinicsComponent implements AfterViewInit {
       return;
     }
 
-    const url = `${this.config.apiUrl}clinic/code/${code}`;
-
-    this.http.get(url).subscribe(
+    this.http.get('http://localhost:8080/clinic/code/'+code).subscribe(
       (data: any) => {
         console.log('Clinic:', data);
 
@@ -116,11 +109,11 @@ export class ProfileClinicsComponent implements AfterViewInit {
           data: formattedData,
         });
 
-        dialogRef.afterClosed().subscribe((result) => {
+        dialogRef.afterClosed().subscribe((result: any) => {
           console.log('Dialog closed:', result);
         });
       },
-      (error) => {
+      (error: any) => {
         console.error('Error al obtener clínica:', error);
       }
     );

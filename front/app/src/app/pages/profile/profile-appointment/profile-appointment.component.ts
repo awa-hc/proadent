@@ -4,23 +4,22 @@ import {
   NgModule,
   OnInit,
 } from '@angular/core';
-import { SchedulerComponent } from '../../../components/scheduler/scheduler.component';
+// import { SchedulerComponent } from '../../../components/scheduler/scheduler.component';
 import { HttpClient } from '@angular/common/http';
 import { format, parseISO } from 'date-fns';
 import { StorageService } from '../../../storage.service';
 
-@NgModule({
-  declarations: [SchedulerComponent],
-  exports: [SchedulerComponent],
-})
-export class SchedulerModule {}
+// @NgModule({
+//   declarations: [SchedulerComponent],
+//   exports: [SchedulerComponent],
+// })
 
 @Component({
   selector: 'app-profile-appointment',
   standalone: true,
   templateUrl: './profile-appointment.component.html',
   styleUrl: './profile-appointment.component.css',
-  imports: [SchedulerModule],
+  imports: [],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ProfileAppointmentComponent implements OnInit {
@@ -58,16 +57,17 @@ export class ProfileAppointmentComponent implements OnInit {
 
   loadAppointments() {
     const ci = this.storage.getItem('ci');
+
     if (ci) {
       this.http
-        .get<any[]>('http://localhost:8080/appointment/patient/' + ci, {
+        .get<any[]>('http://localhost:8080/appointments/${ci}', {
           withCredentials: true,
         })
         .subscribe(
-          (response) => {
+          (response: any) => {
             this.appointments = this.transformEvents(response);
           },
-          (error) => {
+          (error: any) => {
             console.error('Error al obtener las citas', error);
           }
         );

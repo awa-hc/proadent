@@ -33,19 +33,19 @@ export class LoginComponent {
         loginData
       )
       .subscribe(
-        (response) => {
+        (response: any) => {
           console.log('Login exitoso', response);
 
           // Guarda el token en una cookie llamada 'auth'
           const expires = new Date();
-          expires.setTime(expires.getTime() + 24 * 60 * 60 * 1000); // 7 días de expiración
+          expires.setTime(expires.getTime() + 24 * 60 * 60 * 1000); 
 
           document.cookie = `Auth=${
             response.token
           }; expires=${expires.toUTCString()}; path=/; secure; samesite=strict`;
           this.router.navigate(['/profile']);
         },
-        (error) => {
+        (error: any) => {
           console.error('Error en el login', error);
         }
       );
