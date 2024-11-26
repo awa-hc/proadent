@@ -51,8 +51,8 @@ func (g *gormAppointmentRepository) Created(ctx context.Context, appointment *en
 		}
 		appointment.Code = code
 	} else {
-		if err := g.db.Where("code = ?", appointment.Code).First(&entities.Appointment{}).Error; err == nil {
-			return &utils.ValidationError{Field: "code", Message: "appointment code already exists"}
+		if err := g.db.Where("code = ?", appointment.Code).First(&entities.Appointment{}).Error; err != nil {
+			return g.db.Create(appointment).Error
 		}
 	}
 

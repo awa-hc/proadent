@@ -1,2 +1,126 @@
-<app-scheduler [events]="appointments"></app-scheduler>
-<p>asdfdasf</p>
+<app-scheduler
+  [events]="appointments"
+  (emptyDateSelected)="onEmptyDateSelected($event)"
+></app-scheduler>
+
+@if(showForm){
+<div
+  class="fixed inset-0 bg-black bg-opacity-40 z-40"
+  (click)="closeForm()"
+></div>
+<div class="w-full flex items-center justify-center">
+  <div
+    class="fixed inset-0 rounded-xl bg-white h-screen w-3/4 xl:w-1/3 ml-auto z-50 flex flex-col"
+  >
+    <div class="flex flex-col flex-grow text-xl">
+      <span class="font-bold top-0 p-8 text-3xl">Agendar una cita</span>
+      <mat-divider></mat-divider>
+      <section class="p-8 flex-grow">
+        <span class="flex space-x-4 items-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="icon icon-tabler icons-tabler-outline icon-tabler-info-circle text-primary"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
+            <path d="M12 9h.01" />
+            <path d="M11 12h1v4h1" />
+          </svg>
+          <span class="font-bold text-xl">Información de la cita</span>
+        </span>
+        <form [formGroup]="createAppointment" class="mt-4 flex flex-col h-full">
+          <div class="flex flex-col p-3 flex-grow">
+            <label for="ci" class="text-gray-700 font-semibold text-lg"
+              >Cedula de identidad:</label
+            >
+            <input
+              type="text"
+              formControlName="patient_ci"
+              class="px-4 py-2 bg-gray-200 rounded-lg text-black text-lg"
+            />
+
+            <label for="reason" class="text-gray-700 font-semibold text-lg mt-5"
+              >Razón:</label
+            >
+            <input
+              type="text"
+              formControlName="reason"
+              class="px-4 py-2 bg-gray-200 rounded-lg text-black text-lg mb-2"
+              placeholder="Ingresa la razón de la cita"
+              autofocus
+            />
+
+            <mat-divider></mat-divider>
+
+            <div class="flex items-center justify-start">
+              <label
+                for="start_date"
+                class="text-gray-700 font-semibold text-lg my-5"
+                >Fecha:</label
+              >
+              <mat-datepicker-toggle
+                matSuffix
+                [for]="picker"
+              ></mat-datepicker-toggle>
+              @if(createAppointment.get('start_date')?.invalid){
+              <mat-error class="text-red-500"
+                >La fecha de la cita es inválida!</mat-error
+              >
+              }
+            </div>
+            <mat-form-field appearance="fill" class="mb-4">
+              <input
+                matInput
+                [matDatepicker]="picker"
+                formControlName="start_date"
+                [matDatepickerFilter]="dateFilter"
+                class="px-4 py-2 bg-gray-200 rounded-lg text-black text-lg w-full"
+              />
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+
+            <label for="start_time" class="text-gray-700 font-semibold text-lg"
+              >Hora:</label
+            >
+            <mat-form-field appearance="fill">
+              <select
+                formControlName="start_time"
+                class="px-4 py-2 bg-gray-200 rounded-lg text-black text-lg w-full"
+              >
+                @for(hour of availableHours; track hour){
+                <option class="text-black" [value]="hour">{{ hour }}</option>
+                }
+              </select>
+              @if(availableHours.length === 0 &&
+              createAppointment.get('start_date')?.touched &&
+              createAppointment.get('start_date')?.invalid){
+              <mat-error class="text-red-500"
+                >No hay horas disponibles para el día seleccionado</mat-error
+              >
+              }
+            </mat-form-field>
+          </div>
+        </form>
+      </section>
+
+      <section class="flex-shrink-0 p-4">
+        <mat-divider></mat-divider>
+        <button
+          class="bg-primary py-2 px-4 text-white mt-4 w-full"
+          (click)="createAppointmentPOST()"
+        >
+          Agendar Cita
+        </button>
+      </section>
+    </div>
+  </div>
+</div>
+}

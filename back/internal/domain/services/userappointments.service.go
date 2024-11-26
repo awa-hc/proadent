@@ -1,6 +1,7 @@
 package services
 
 import (
+	"back/internal/domain/dto"
 	"back/internal/domain/entities"
 	"back/internal/repository/appointment"
 	"back/internal/repository/userappointments"
@@ -35,16 +36,16 @@ func (uas *UserAppointmentsService) Created(ctx context.Context, userAppointment
 func (uas *UserAppointmentsService) GetByID(ctx context.Context, id int) (*entities.UserAppointments, error) {
 	return uas.UserAppointmentsService.GetByID(ctx, id)
 }
-func (uas *UserAppointmentsService) GetByUserCI(ctx context.Context, userCI string) ([]entities.UserAppointments, error) {
+func (uas *UserAppointmentsService) GetByUserCI(ctx context.Context, userCI string) (dto.UserAppointmentsDTO, error) {
 
 	// validate user exists
 	user, err := uas.UserService.GetByCI(ctx, userCI)
 
 	if err != nil {
-		return nil, err
+		return dto.UserAppointmentsDTO{}, err
 	}
 	if user == nil {
-		return nil, &utils.ValidationError{Message: "User not found"}
+		return dto.UserAppointmentsDTO{}, &utils.ValidationError{Message: "User not found"}
 	}
 
 	return uas.UserAppointmentsService.GetByUserCI(ctx, userCI)

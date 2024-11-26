@@ -1,6 +1,7 @@
 package userappointments
 
 import (
+	"back/internal/domain/dto"
 	"back/internal/domain/entities"
 	"context"
 
@@ -29,13 +30,38 @@ func (g *gormUserAppointmentsRepository) GetByID(ctx context.Context, id int) (*
 }
 
 // GetByUserCI implements UserAppointmentsRepository.
-func (g *gormUserAppointmentsRepository) GetByUserCI(ctx context.Context, userCI string) ([]entities.UserAppointments, error) {
+func (g *gormUserAppointmentsRepository) GetByUserCI(ctx context.Context, userCI string) (dto.UserAppointmentsDTO, error) {
 	var userAppointments []entities.UserAppointments
-
-	if err := g.db.Where("user_ci = ?", userCI).Find(&userAppointments).Error; err != nil {
-		return nil, err
+	if err := g.db.Where("user_ci = ?", userCI).Preload("Appointment").Preload("User").Find(&userAppointments).Error; err != nil {
+		return dto.UserAppointmentsDTO{}, err
 	}
-	return userAppointments, nil
+
+	// Asumiendo que solo hay un user_ci para este caso específico
+	var userAppointmentsDTO dto.UserAppointmentsDTO
+
+	// Iterar sobre las citas de usuario
+	for _, ua := range userAppointments {
+		// Si aún no hemos inicializado el DTO, hacerlo
+		if userAppointmentsDTO.UserCI == "" {
+			userAppointmentsDTO.UserCI = ua.UserCI
+			userAppointmentsDTO.Appointments = []dto.AppointmentDTO{}
+		}
+
+		// Asegúrate de que estamos agregando citas para el mismo user_ci
+		if ua.UserCI == userAppointmentsDTO.UserCI {
+			userAppointmentsDTO.Appointments = append(userAppointmentsDTO.Appointments, dto.AppointmentDTO{
+				Code:      ua.Appointment.Code,
+				Reason:    ua.Appointment.Reason,
+				DateTime:  ua.Appointment.DateTime,
+				Status:    ua.Appointment.Status,
+				PatientCI: ua.User.CI,
+			})
+		}
+	}
+
+	// Ahora userAppointmentsDTO tiene la estructura agrupada correctamente
+
+	return userAppointmentsDTO, nil
 
 }
 

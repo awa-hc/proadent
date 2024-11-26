@@ -33,7 +33,10 @@ export class MeComponent implements OnInit {
   isSidebarOpen = false;
 
   ngOnInit(): void {
-    if (this._cookieService.getCookie('Auth') == null) {
+    if (
+      this._cookieService.getCookie('Auth') == null ||
+      this.storage.getItem('Auth') == null
+    ) {
       this.router.navigate(['/login']);
     } else {
       this.getProfile();
@@ -45,7 +48,10 @@ export class MeComponent implements OnInit {
   }
 
   getProfile() {
-    if (!document.cookie || !document.cookie.includes('Auth')) {
+    if (
+      !this._cookieService.getCookie('Auth') ||
+      !this.storage.getItem('Auth')
+    ) {
       this.router.navigate(['/login']);
       return;
     }
